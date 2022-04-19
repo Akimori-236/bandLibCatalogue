@@ -54,3 +54,7 @@ INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('5', 'Big Band');
 INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('6', 'Study');
 INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('7', 'Reference');
 INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('8', 'Others');
+
+INSERT INTO `publisher` (`publisherID`, `publisher`) VALUES ('1', 'Anglo Music Press');
+
+INSERT INTO `music` (`musicID`, `catalogueNo`, `title`, `composer`, `publisherID`, `ensembleID`) VALUES ('1', '10-0032-01', 'Hymn of the Highlands', 'Philip Sparke', '1', '1');
