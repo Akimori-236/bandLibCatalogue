@@ -28,15 +28,13 @@ CREATE TABLE `ensemble` (
 
 
 /* foreign keys init */
-ALTER TABLE `music` 
-ADD INDEX `ensembleID_idx` (`ensembleID` ASC) VISIBLE,
-;
+ALTER TABLE `music` ALTER INDEX `ensembleID_idx` VISIBLE;
 ALTER TABLE `music` 
 ADD CONSTRAINT `ensembleID`
   FOREIGN KEY (`ensembleID`)
   REFERENCES `ensemble` (`ensembleID`)
   ON DELETE RESTRICT
-  ON UPDATE CASCADE,
+  ON UPDATE CASCADE;
 
 
 /* Data init */
@@ -49,6 +47,4 @@ INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('6', 'Study');
 INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('7', 'Reference');
 INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('8', 'Others');
 
-INSERT INTO `publisher` (`publisherID`, `publisher`) VALUES ('1', 'Anglo Music Press');
-
-INSERT INTO `music` (`musicID`, `catalogueNo`, `title`, `composer`, `publisherID`, `ensembleID`) VALUES ('1', '10-0032-01', 'Hymn of the Highlands', 'Philip Sparke', 'Anglo Music Press', '1');
+INSERT INTO `music` (`musicID`, `catalogueNo`, `title`, `composer`, `publisher`, `ensembleID`) VALUES ('1', '10-0032-01', 'Hymn of the Highlands', 'Philip Sparke', 'Anglo Music Press', '1');
