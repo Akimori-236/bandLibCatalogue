@@ -44,10 +44,10 @@ def error404(e):
 
 # GET all Music
 @app.route('/music')    # GET method by default
-def getAllSheetmusic():
+def getAllMusic():
     try:
-        jsonSheetmusic = Music.getAllMusic()
-        output = {"Music": jsonSheetmusic}
+        jsonMusic = Music.getAllMusic()
+        output = {"Music": jsonMusic}
         return jsonify(output), 200     # OK
     except Exception as err:
         print(err)
