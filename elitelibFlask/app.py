@@ -1,11 +1,25 @@
-from flask import Flask, request, jsonify, g, render_template
-from flask_cors import CORS
+from flask import Flask, request, jsonify, render_template
 from model.Music import Music
 from model.Category import Category
-from Validation.Validator import *
+from flask_sqlalchemy import SQLAlchemy
+from socket import gethostname
 
 app = Flask(__name__, template_folder='templates')
-CORS(app)
+app.config["DEBUG"] = True
+
+# code from PythonAnywhere
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+username = 'elitelib22',
+password = 'librarydb',
+hostname = 'elitelib22.mysql.pythonanywhere-services.com',
+databasename = 'elitelib22$libcatalogue',
+)
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
 
 # Front Page
 @app.route('/')
@@ -45,7 +59,7 @@ def getAllSheetmusic():
 def getOneMusic(musicid):
     try:
         jsonMusic = Music.getMusicById(musicid)
-        
+
         if len(jsonMusic)>0:
             output = {"Music": jsonMusic}
             return jsonify(output), 200     # OK
@@ -73,7 +87,7 @@ def insertMusic():
 #DELETE music with specified musicid
 @app.route('/music/<int:musicid>',methods=['DELETE'])
 def deleteMusic(musicid):
-    try:  
+    try:
         rows = Music.deleteMusic(musicid)
         output = {"Rows Affected": rows}
         return jsonify(output), 200
@@ -127,5 +141,7 @@ def insertCategory():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    # app.run(port=8000, debug=True) to run in port 8000
+    db.create_all()
+    if 'liveconsole' not in gethostname():
+        app.run(debug=True)
+        # app.run(port=8000, debug=True) to run in port 8000

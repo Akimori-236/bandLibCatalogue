@@ -1,18 +1,20 @@
-from mysql.connector import pooling
-from config.settings import Settings
+import sqlalchemy.pool as pool
+import psycopg2
 
 class DatabasePool:
-    # class variable
-    connection_pool = pooling.MySQLConnectionPool(
-        pool_name = 'ws_pool',
-        pool_size = 5,
-        host = 'localhost',
-        database = Settings.database,
-        user = Settings.user,
-        password = Settings.password
-    )
-    
+
+    def getconn():
+        c = psycopg2.connect(
+            user='elitelib22',
+            password = 'librarydb',
+            host='elitelib22.mysql.pythonanywhere-services.com',
+            dbname='elitelib22$libcatalogue'
+            )
+        return c
+
+    mypool = pool.QueuePool(getconn, max_overflow=2, pool_size=1)
+
     @classmethod
-    def getConnection(cls): #cls = current class
-        dbConn = cls.connection_pool.get_connection() # Gets a connection from the connection_pool
+    def getConnection(cls):
+        dbConn = cls.mypool.connect()
         return dbConn
