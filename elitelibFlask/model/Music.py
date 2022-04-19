@@ -41,8 +41,18 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "INSERT INTO music(catalogueNo, title, composer, publisher, ensembleID) VALUES (%s, %s, %s, %s, %s)"
-            values = tuple(jsonMusic['catalogueNo'], jsonMusic['title'], jsonMusic['composer'], jsonMusic['publisher'], jsonMusic['ensembleID'])
+            sql = "INSERT INTO music(catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleID, parts, remarks) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = tuple(
+                jsonMusic['catalogueNo'], 
+                jsonMusic['categoryID'], 
+                jsonMusic['title'], 
+                jsonMusic['composer'], 
+                jsonMusic['arranger'], 
+                jsonMusic['publisher'], 
+                jsonMusic['featuredInstrument'], 
+                jsonMusic['ensembleID'], 
+                jsonMusic['parts'], 
+                jsonMusic['remarks'])
             cursor.execute(sql, values)
             dbConn.commit()
             rows = cursor.rowcount
