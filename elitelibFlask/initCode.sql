@@ -4,7 +4,7 @@ CREATE TABLE `music` (
   `title` VARCHAR(255) NOT NULL,
   `composer` VARCHAR(255) NULL,
   `arranger` VARCHAR(255) NULL,
-  `publisherID` INT NULL,
+  `publisher` VARCHAR(255) NULL,
   `featuredInstrument` VARCHAR(255) NULL,
   `ensembleID` INT NULL,
   `parts` VARCHAR(255) NULL,
@@ -13,11 +13,11 @@ CREATE TABLE `music` (
   UNIQUE INDEX `catalogueNo_UNIQUE` (`catalogueNo` ASC));
 
 
-CREATE TABLE `publisher` (
-  `publisherID` INT NOT NULL,
-  `publisher` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`publisherID`),
-  UNIQUE INDEX `publisherID_UNIQUE` (`publisherID` ASC));
+-- CREATE TABLE `publisher` (
+--   `publisherID` INT NOT NULL,
+--   `publisher` VARCHAR(255) NOT NULL,
+--   PRIMARY KEY (`publisherID`),
+--   UNIQUE INDEX `publisherID_UNIQUE` (`publisherID` ASC));
 
 
 CREATE TABLE `ensemble` (
@@ -30,7 +30,6 @@ CREATE TABLE `ensemble` (
 /* foreign keys init */
 ALTER TABLE `music` 
 ADD INDEX `ensembleID_idx` (`ensembleID` ASC) VISIBLE,
-ADD INDEX `publisherID_idx` (`publisherID` ASC) VISIBLE;
 ;
 ALTER TABLE `music` 
 ADD CONSTRAINT `ensembleID`
@@ -38,11 +37,6 @@ ADD CONSTRAINT `ensembleID`
   REFERENCES `ensemble` (`ensembleID`)
   ON DELETE RESTRICT
   ON UPDATE CASCADE,
-ADD CONSTRAINT `publisherID`
-  FOREIGN KEY (`publisherID`)
-  REFERENCES `publisher` (`publisherID`)
-  ON DELETE RESTRICT
-  ON UPDATE CASCADE;
 
 
 /* Data init */
@@ -57,4 +51,4 @@ INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('8', 'Others');
 
 INSERT INTO `publisher` (`publisherID`, `publisher`) VALUES ('1', 'Anglo Music Press');
 
-INSERT INTO `music` (`musicID`, `catalogueNo`, `title`, `composer`, `publisherID`, `ensembleID`) VALUES ('1', '10-0032-01', 'Hymn of the Highlands', 'Philip Sparke', '1', '1');
+INSERT INTO `music` (`musicID`, `catalogueNo`, `title`, `composer`, `publisherID`, `ensembleID`) VALUES ('1', '10-0032-01', 'Hymn of the Highlands', 'Philip Sparke', 'Anglo Music Press', '1');
