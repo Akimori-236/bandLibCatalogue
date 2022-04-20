@@ -1,72 +1,64 @@
-//  Data Init
-var categoryList = {
-    "00" : "NON-PUBLISHED",
-    "10" : "WIND BAND",
-    "11" : "WIND BAND (A5)",
-    "12" : "CEREMONIAL MUSIC",
-    "13" : "FOREIGN ANTHEM",
-    "14" : "WIND BAND TRAINING",
-    "20" : "FLUTE",
-    "21" : "OBOE",
-    "22" : "COR ANGLAIS",
-    "23" : "BASSOON",
-    "24" : "CLARINET",
-    "25" : "SAXOPHONE",
-    "30" : "HORN",
-    "31" : "TRUMPET",
-    "32" : "TROMBONE",
-    "33" : "EUPHONIUM",
-    "34" : "TUBA",
-    "40" : "STRINGS",
-    "41" : "PIANO",
-    "42" : "HARP/GUITAR",
-    "50" : "PERCUSSION",
-    "60" : "RECORDER",
-    "61" : "VOCAL",
-    "70" : "WOODWIND ENSEMBLE",
-    "71" : "BRASS ENSEMBLE",
-    "72" : "MIXED ENSEMBLE",
-    "73" : "FLEXIBLE ENSEMBLE",
-    "74" : "BIG BAND",
-    "80" : "REFERENCE",
-    "81" : "THEORY PAPERS G5",
-    "82" : "THEORY PAPERS G6",
-    "83" : "THEORY PAPERS G7",
-    "84" : "THEORY PAPERS G8",
-    "85" : "THEORY MATERIAL",
-    "86" : "AURAL MATERIAL",
-    "90" : "WIND BAND/ORCH DISC",
-    "91" : "INSTRUMENT/CHAMBER DISC",
-    "92" : "MISCELLANEOUS/ARCHIVE DISC",
-    "93" : "WIND BAND TRAINING DISC",
-    "94" : "MARCHING BAND DISC"
-};
-var ensembleList = [
-    "Concert Band",
-    "Marching Band",
-    "Solo",
-    "Ensemble",
-    "Big Band",
-    "Study",
-    "Reference",
-    "Others"
-];
+// Show all sheet music
+function getAllMusic() {
 
+    var strHTMLcontent = ""; // insert search result
 
-// get genres
-var allCategories = function () {
-    var tmp = null;
     $.ajax({
-        url: 'http://localhost:5000/genres',
-        type: "GET",
+        url: 'http://elitelib22.pythonanywhere.com/music',
+        type: 'GET',
         dataType: 'json',
-        async: false,
-        global: false,
-        'data': { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
-        'success': function (data) {
-            tmp = data;
-        }
+        success: successFunctionAll,
+        error: errorFunctionAll,
     });
-    return tmp;
-}();
-allCategories = allCategories['Category']
+
+    return false;
+}
+
+// Display all movies in a table
+function successFunctionAll(result) {
+    $('#infoSearch').html("");
+    strHTMLcontent = "<table id=\"results\"><tr>" +
+        "<th>Catalogue Number</th>" +
+        "<th>Title</th>" +
+        "<th>Composer</th>" +
+        "<th>Arranger</th>" +
+        "<th>Publisher</th>" +
+        "<th>Featured Instrument</th>" +
+        "<th>Ensemble Type</th>" +
+        "<th>Parts</th>" +
+        "<th>Remarks</th>" +
+        "<th>Delete</th>" +
+        "</tr>";
+
+    var jObjects = result.Music
+    if (jObjects.length > 0) { // Check if there are any results:
+        for (var index in jObjects) {
+            let musicID = result.Music[index].musicID
+
+            strHTMLcontent += "<tr>"+
+            // Data
+            "<td>" + result.Music[index].catalogueNo + "</td>" +
+            "<td>" + result.Movies[index].title + "</td>" +
+            "<td>" + result.Movies[index].composer + "</td>" +
+            "<td>" + result.Movies[index].arranger + "</td>" +
+            "<td>" + result.Movies[index].publisher + "</td>" +
+            "<td>" + result.Movies[index].featuredInstrument + "</td>" +
+            "<td>" + result.Movies[index].ensembleID + "</td>" +
+            "<td>" + result.Movies[index].parts + "</td>" +
+            "<td>" + result.Movies[index].remarks + "</td>" +
+
+            // delete button
+            "<td>" + "<a href='#' class='btn btn-default btn-danger rounded-circle px-3' onclick='return deleteMovieByID("+movID+")'>" + "X" +"</a>" + "</td>";
+        }
+    }
+    else {
+        strHTMLcontent += "<tr><td>No results found</td></tr>";
+    }
+    strHTMLcontent += "</table>";
+    $('#infoSearch').html(strHTMLcontent);
+}
+
+// Error message
+function errorFunctionAll(xhr, status, strErr) {
+  $('#infoSearch').html('<p>An error has occurred</p>');
+}
