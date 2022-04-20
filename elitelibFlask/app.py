@@ -36,11 +36,11 @@ def getAllMusic():
         return {}, 500      # internal server error
 
 
-# GET one music by catalog number
-@app.route('/music/<int:catno>')
-def getOneMusic(catno):
+# GET one music by musicID
+@app.route('/music/<int:musicID>')
+def getOneMusic(musicID):
     try:
-        jsonMusic = Music.getMusicByCatNo(catno)
+        jsonMusic = Music.getMusicByID(musicID)
 
         if len(jsonMusic)>0:
             output = {"Music": jsonMusic}
@@ -51,6 +51,23 @@ def getOneMusic(catno):
     except Exception as err:
         print(err)
         return {}, 500      # internal server error
+
+
+# SEARCH music by title
+@app.route('/search/title',methods=['GET'])
+def searchMusicByTitle():
+    try:
+        substring = request.args['substring']   # will be request.form for POST method
+        music = Music.searchMusicByTitle(substring)
+        if len(music) > 0:
+            output = {"Music": music}
+            return jsonify(output), 200      # OK
+        else:
+            output = {}
+            return jsonify(output), 404      # Not Found
+    except Exception as err:
+        print(err)
+        return {}, 500       # Internal Server Error
 
 
 # INSERT new music
@@ -79,18 +96,3 @@ def deleteMusic(musicid):
         return {}, 500
 
 
-# SEARCH music by substring
-@app.route('/search/music',methods=['GET'])
-def getMusicBySubstring():
-    try:
-        substring = request.args['substring']   # will be request.form for POST method
-        music = Music.getMusicBySubstring(substring)
-        if len(music) > 0:
-            output = {"Music": music}
-            return jsonify(output), 200      # OK
-        else:
-            output = {}
-            return jsonify(output), 404      # Not Found
-    except Exception as err:
-        print(err)
-        return {}, 500       # Internal Server Error

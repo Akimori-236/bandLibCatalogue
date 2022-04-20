@@ -6,9 +6,8 @@ class Music:
     @classmethod
     def getAllMusic(cls):
         try:
-            connData = DatabasePool.getConnection()
-            dbConn = connData[0]
-            cursor = connData[1]
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
             sql = 'SELECT * FROM music'
             cursor.execute(sql)
             allMusic = cursor.fetchall()
@@ -18,16 +17,14 @@ class Music:
             print('Connection released')
 
 
-
-    # Get music by Cat number
+    # Get music by musicID
     @classmethod
-    def getMusicByCatNo(cls, catno):
+    def getMusicByID(cls, musicID):
         try:
-            connData = DatabasePool.getConnection()
-            dbConn = connData[0]
-            cursor = connData[1]
-            sql = 'SELECT * from music WHERE catalogueNo=%s'
-            values = tuple(catno)
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT * from music WHERE musicID=%s'
+            values = tuple(str(musicID))
             cursor.execute(sql, values)
             music = cursor.fetchall()
             return music
@@ -36,15 +33,29 @@ class Music:
             print('Connection released')
 
 
+    # SEARCH music by title
+    @classmethod
+    def searchMusicByTitle(cls, substring):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT * from music WHERE title LIKE concat('%', %s, '%')"
+            values = tuple(substring)
+            cursor.execute(sql, values)
+            music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
 
     # INSERT new music
     @classmethod
     def insertMusic(cls, jsonMusic):
         try:
-            connData = DatabasePool.getConnection()
-            dbConn = connData[0]
-            cursor = connData[1]
-            sql = "INSERT INTO music(catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleID, parts, remarks) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleID`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             values = tuple(
                 jsonMusic['catalogueNo'],
                 jsonMusic['categoryID'],
@@ -65,13 +76,12 @@ class Music:
             print("Connection released.")
 
 
-
+    # DELETE music by musicID
     @classmethod
     def deleteMusic(cls, musicid):
         try:
-            connData = DatabasePool.getConnection()
-            dbConn = connData[0]
-            cursor = connData[1]
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
             sql="DELETE from music WHERE musicid=%s"
             values = tuple(musicid)
             cursor.execute(sql, values)
@@ -84,18 +94,4 @@ class Music:
 
 
 
-    # SEARCH music by substring
-    @classmethod
-    def getMusicBySubstring(cls, substring):
-        try:
-            connData = DatabasePool.getConnection()
-            dbConn = connData[0]
-            cursor = connData[1]
-            sql = "SELECT * from music WHERE name LIKE concat('%', %s, '%')"
-            values = tuple(substring)
-            cursor.execute(sql, values)
-            music = cursor.fetchall()
-            return music
-        finally:
-            dbConn.close()
-            print('Connection released')
+
