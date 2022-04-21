@@ -25,20 +25,24 @@
         <link rel="icon" href="../static/logo.png" />
         <!-- CSS -->
         <link rel="stylesheet" href="../static/styles.css" />
+        <!-- Javascript -->
+        <!--<script type="text/javascript" src="index.js"></script>-->
     </head>
 
 
 
     <body>
-        <div class="container-fluid vh-100 vw-100">
+        <div class="container-fluid vh-100">
             <!--NAV Row-->
-            <div class="row">
-                {% include 'navbar.html' %}
+            <div class="mb-3">
+                    {% include 'navbar.html' %}
             </div>
-            <div class="container">
-                {% block content %}
-                <!-- content from other templates -->
-                {% endblock %}
+            <div class="row mt-3">
+                <div class="">
+                    {% block content %}
+                    <!-- content from other templates -->
+                    {% endblock %}
+                </div>
             </div>
         </div>
     </body>
