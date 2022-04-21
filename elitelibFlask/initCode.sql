@@ -22,12 +22,24 @@ CREATE TABLE `category` (
   UNIQUE INDEX `category_UNIQUE` (`category` ASC));
 
 
-
 CREATE TABLE `ensemble` (
   `ensembleID` INT NOT NULL,
   `ensemble` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`ensembleID`),
   UNIQUE INDEX `ensembleID_UNIQUE` (`ensembleID` ASC));
+
+
+CREATE TABLE `user` (
+  `userID` INT NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`userID`),
+  UNIQUE INDEX `userID_UNIQUE` (`userID` ASC),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC));
+
+
+
 
 
 /* foreign keys init */
@@ -104,10 +116,7 @@ INSERT INTO `category` (`categoryID`, `category`) VALUES ('93', 'WIND BAND TRAIN
 INSERT INTO `category` (`categoryID`, `category`) VALUES ('94', 'MARCHING BAND DISC');
 
 
-INSERT INTO `music` (`musicID`, `catalogueNo`, 'categoryID', `title`, `composer`, `publisher`, `ensembleID`) VALUES ('1', '10-0032-01', '10', 'Hymn of the Highlands', 'Philip Sparke', 'Anglo Music Press', '1');
-INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`) VALUES ('10-X001-01', '10', 'Star Wars Trilogy');
-
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`, `remarks`) VALUES ('10-0002-01', '10', 'A FESTIVE OVERTURE', 'ALFRED REED', 'HAL LEONARD', '1', '2 SETS, OLDER SET NO CONDUCTOR SCORE');
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `ensembleID`) VALUES ('10-0003-01', '10', '1812 OVERTURE SOLENNELLE (1812 OVERTURE)', 'PETER ILYICH TCHAIKOVSKY', 'T. CONWAY BROWN', 'BOOSEY & HAWKES', '1');
-INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`) VALUES ('10-0004-01', '10', 'THE SEVENTH NIGHT OF JULY', 'ITARU SAKAI', 'DE HASKE', '1');
+INSERT INTO `music` (`musicID`, `catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`) VALUES ('5', '10-0004-01', '10', 'THE SEVENTH NIGHT OF JULY', 'ITARU SAKAI', 'DE HASKE', '1');
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`, `remarks`) VALUES ('10-0004-02', '10', 'DAIBUTSU TO SHIKA', 'ITARU SAKAI', 'DE HASKE', '1', 'MISSING 1ST SAXOPHONE (NOT ORIGINAL), Eb CLARINET');

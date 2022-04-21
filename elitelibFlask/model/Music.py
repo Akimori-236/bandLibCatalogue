@@ -17,6 +17,40 @@ class Music:
             print('Connection released')
 
 
+    # GET music by pages
+    @classmethod
+    def getMusicByPage(cls, page, rowCount):
+        offset = (page-1)*rowCount
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT * FROM music LIMIT %s, %s'
+            values = tuple(offset, rowCount)
+            cursor.execute(sql, values)
+            pageOfMusic = cursor.fetchall()
+            return pageOfMusic
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # GET total count of music
+    @classmethod
+    def getTotalMusicCount(cls):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT COUNT(musicID) FROM music'
+            cursor.execute(sql)
+            musicCount = cursor.fetchall()
+            return musicCount
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+
+
+
+
     # Get music by musicID
     @classmethod
     def getMusicByID(cls, musicID):
@@ -78,12 +112,12 @@ class Music:
 
     # DELETE music by musicID
     @classmethod
-    def deleteMusic(cls, musicid):
+    def deleteMusicByID(cls, musicID):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql="DELETE from music WHERE musicid=%s"
-            values = tuple(musicid)
+            sql="DELETE from music WHERE musicID=%s"
+            values = tuple(musicID)
             cursor.execute(sql, values)
             dbConn.commit()
             rows=cursor.rowcount
