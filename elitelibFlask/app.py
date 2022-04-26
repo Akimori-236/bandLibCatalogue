@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from model.Music import Music
 from model.User import User
-from Validation.Validator import *
+# from Validation.Validator import *
 
 app = Flask(__name__)
 
@@ -15,8 +15,8 @@ def sanityCheck():
 
 # ADMIN Tools
 @app.route('/admin')
-@validateJWTToken
-@requireAdmin
+# @validateJWTToken
+# @requireAdmin
 def admin():
     return render_template("admin.html", title="Librarian Admin Tools")
 
@@ -40,80 +40,80 @@ def error404(e):
 ###########################################
 # USERS
 
-# GET all users
-@app.route('/users')    # GET method by default
-@validateJWTToken
-@requireAdmin
-def getAllUsers():
-    
-    print("g context role:"+g.role)
-    print("g context userid:"+str(g.userid))
-    try:
-        jsonUsers = User.getAllUsers()
-        output = {"Users": jsonUsers}
-        return jsonify(output), 200     # OK
-    except Exception as err:
-        print(err)
-        return {}, 500      # internal server error
+# # GET all users
+# @app.route('/users')    # GET method by default
+# @validateJWTToken
+# @requireAdmin
+# def getAllUsers():
 
-# GET one user by provided userID
-@app.route('/users/<int:userid>')   # GET method by default
-@validateJWTToken
-def getOneUser(userid):
+#     print("g context role:"+g.role)
+#     print("g context userid:"+str(g.userid))
+#     try:
+#         jsonUsers = User.getAllUsers()
+#         output = {"Users": jsonUsers}
+#         return jsonify(output), 200     # OK
+#     except Exception as err:
+#         print(err)
+#         return {}, 500      # internal server error
 
-    print("g context role:"+g.role)
-    print("g context userid:"+str(g.userid))
-    try:
-        jsonUser = User.getUserById(userid)
-        
-        if len(jsonUser)>0:
-            output = {"User": jsonUser}
-            return jsonify(output), 200     # OK
-        else:
-            output = {}
-            return jsonify(output), 404     # Not found
-    except Exception as err:
-        print(err)
-        return {}, 500      # internal server error
-        
-#DELETE user with specified userid
-@app.route('/users/<int:userid>',methods=['DELETE'])
-def deleteUser(userid):
-    try:  
-        rows = User.deleteUser(userid)
-        output = {"Rows Affected": rows}
-        return jsonify(output), 200
-    except Exception as err:
-        print(err)
-        return {}, 500
-        
-# ISSUE JWTs / LOGIN
-@app.route('/users/login', methods=['POST']) # POST as token creation
-def loginUser():
-    try:
-        jsonUser = request.json
-        email = jsonUser['email']
-        password = jsonUser['password']
-        jwtToken = User.loginUser(email, password)
-        output = {"JWT": jwtToken}
-        return jsonify(output), 200     # Successful creation
-    except Exception as err:
-        print(err)
-        return {},500
+# # GET one user by provided userID
+# @app.route('/users/<int:userid>')   # GET method by default
+# @validateJWTToken
+# def getOneUser(userid):
+
+#     print("g context role:"+g.role)
+#     print("g context userid:"+str(g.userid))
+#     try:
+#         jsonUser = User.getUserById(userid)
+
+#         if len(jsonUser)>0:
+#             output = {"User": jsonUser}
+#             return jsonify(output), 200     # OK
+#         else:
+#             output = {}
+#             return jsonify(output), 404     # Not found
+#     except Exception as err:
+#         print(err)
+#         return {}, 500      # internal server error
+
+# #DELETE user with specified userid
+# @app.route('/users/<int:userid>',methods=['DELETE'])
+# def deleteUser(userid):
+#     try:
+#         rows = User.deleteUser(userid)
+#         output = {"Rows Affected": rows}
+#         return jsonify(output), 200
+#     except Exception as err:
+#         print(err)
+#         return {}, 500
+
+# # ISSUE JWTs / LOGIN
+# @app.route('/users/login', methods=['POST']) # POST as token creation
+# def loginUser():
+#     try:
+#         jsonUser = request.json
+#         email = jsonUser['email']
+#         password = jsonUser['password']
+#         jwtToken = User.loginUser(email, password)
+#         output = {"JWT": jwtToken}
+#         return jsonify(output), 200     # Successful creation
+#     except Exception as err:
+#         print(err)
+#         return {},500
 
 
-# INSERT new user
-@app.route('/users', methods=['POST'])
-@validateRegex
-def insertUser():
-    try:
-        jsonUser = request.json
-        rows = User.insertUser(jsonUser)
-        output = {"Users Inserted": rows}
-        return jsonify(output), 201     # Successful creation
-    except Exception as err:
-        print(err)
-        return {},500
+# # INSERT new user
+# @app.route('/users', methods=['POST'])
+# @validateRegex
+# def insertUser():
+#     try:
+#         jsonUser = request.json
+#         rows = User.insertUser(jsonUser)
+#         output = {"Users Inserted": rows}
+#         return jsonify(output), 201     # Successful creation
+#     except Exception as err:
+#         print(err)
+#         return {},500
 
 
 
