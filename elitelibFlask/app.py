@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
+import os
+from os.path import join, dirname, realpath
 from model.Music import Music
 from model.User import User
 # from Validation.Validator import *
@@ -10,7 +12,7 @@ app = Flask(__name__)
 @app.route("/index")
 @app.route("/home")
 def sanityCheck():
-    return render_template("index.html", title="SAF Band Library Catalogue")
+    return render_template("index.html", title="Band Library Catalogue")
     # return "Hello World"
 
 # ADMIN Tools
@@ -23,7 +25,12 @@ def admin():
 # about
 @app.route('/about')
 def about():
-    return render_template("about.html", title="SAF Band Digitalization Team 2022")
+    return render_template("about.html", title="Band Digitalization Team 2022", team=["ME2 Joe Tan", "ME1 Ng Wee Seng", "ME1 Vignesh", "ME1 Gerald Lim", "ME1 Kenneth Low"])
+
+# upload csv form
+@app.route('/uploadcsv')
+def uploadCSV():
+    return render_template("uploadcsv.html", title="Restore Database")
 
 # # ERRORS
 @app.errorhandler(500)
@@ -39,6 +46,11 @@ def error404(e):
 
 ###########################################
 # USERS
+
+# Log in page
+@app.route('/login')
+def Login():
+    return render_template("login.html", title="Librarian Login")
 
 # # GET all users
 # @app.route('/users')    # GET method by default
@@ -224,6 +236,31 @@ def insertMusic():
         return {},500
 
 
+##############################################################
+
+# Restore database by inputting a csv file
+# Upload folder
+UPLOAD_FOLDER = 'static/files'
+app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+
+@app.route('/uploadcsv', methods=['POST'])
+def restoreDB():
+    try:
+        # get the uploaded file
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '': 
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+            # set the file path
+            uploaded_file.save(file_path)
+            # save the file
+            return redirect(url_for('index'))
+        
+        rows = Music.DBReset(uploaded_file)
+        output = {"Music Inserted": rows}
+        return jsonify(output), 201     # Successful creation
+    except Exception as err:
+        print(err)
+        return {},500
 
 
 

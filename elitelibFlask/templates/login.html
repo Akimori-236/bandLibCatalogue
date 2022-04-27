@@ -4,22 +4,27 @@
 
 <div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">
     <div class="card-body">
-      <form>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-          </div>
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+        <!--LOGIN FORM-->
+    	<form>
+        	<div class="form-group">
+            	<img class="mx-auto d-block" src="static/CIA_Old.svg" height=100 width=100>
+        	</div>
+        	<div class="form-group">
+            	<label for="userID">Username</label>
+            	<input type="text" class="form-control" id="userID" aria-describedby="usernameHelp" placeholder="Enter Username">
+            	<small id="usernameHelp" class="form-text text-muted"><!-- sub text here --></small>
+        	</div>
+        	<div class="form-group">
+            	<label for="passwordID">Password</label>
+            	<input type="password" class="form-control" id="passwordID" placeholder="Password">
+        	</div>
+    		<!-- <div class="form-check">
+            	<input type="checkbox" class="form-check-input" id="exampleCheck1">
+            	<label class="form-check-label" for="exampleCheck1">Check me out</label>
+        	</div> -->
+        	<button type="submit" class="btn btn-danger mt-3">Log In</button>
         </form>
+
     </div>
   </div>
 

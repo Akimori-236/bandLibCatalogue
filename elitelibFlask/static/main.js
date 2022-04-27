@@ -1,3 +1,15 @@
+// ENSEMBLE TYPES
+const ensembleList = [
+    "Concert Band",
+    "Marching Band",
+    "Solo",
+    "Ensemble",
+    "Big Band",
+    "Study",
+    "Reference",
+    "Others"
+];
+
 // DELETE BUTTON
 const deleteBtn = `<button type="button" class="btn btn-outline-danger">
     <svg
@@ -15,27 +27,20 @@ const deleteBtn = `<button type="button" class="btn btn-outline-danger">
 
 
 // get total music count
-var totalMusicCount = function () {
-    var tmp = null;
+function getMusicCount() {
+    var musicCounter = 0;
+    var paginationHTML = "";
+
     $.ajax({
         url: 'http://elitelib22.pythonanywhere.com/music/totalcount',
         type: "GET",
         dataType: 'json',
-        async: false,
-        global: false,
-        'data': { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
-        'success': function (data) {
-            tmp = data;
-        }
-    });
-    return tmp;
-}();
-totalMusicCount = totalMusicCount['TotalMusic'][0][0]
-console.log(totalMusicCount)
+        success: displayPagination,
+        error: showErrorMsg,
+    })
 
-
-
-
+    return false;
+}
 
 // Show all sheet music
 function getAllMusic() {
@@ -75,7 +80,7 @@ function successDisplayTable(result) {
     $('#searchResults').html("");
     strHTMLcontent = "<table id=\"results\" class='table table-bordered table-hover table-dark'>" +
         "<thead class='thead-light'>" +
-        "<tr>" +
+        "<tr class='text-info'>" +
         "<th>Catalogue Number</th>" +
         "<th>Title</th>" +
         "<th>Composer</th>" +
@@ -91,19 +96,51 @@ function successDisplayTable(result) {
     var jObjects = result.Music
     if (jObjects.length > 0) { // Check if there are any results:
         for (var index in jObjects) {
-            let musicID = result.Music[index].musicID
-            // console.log(result.Music[index])
+            // Variables of each row
+            let musicID = result.Music[index][0];
+            let catalogueNo = result.Music[index][1];
+            let catID = result.Music[index][2];
+            let title = result.Music[index][3];
+            let composer = '-';
+            if (typeof result.Music[index][4]  != 'object') {
+                composer = result.Music[index][4]
+            }
+            let arranger = '-';
+            if (typeof result.Music[index][5] != 'object') {
+                arranger = result.Music[index][5]
+            }
+            let publisher = '-';
+            if (typeof result.Music[index][6] != 'object') {
+                publisher = result.Music[index][6]
+            }
+            let featInstru = '-';
+            if (typeof result.Music[index][7] != 'object') {
+                featInstru = result.Music[index][7]
+            }
+            let ensemble = ensembleList[Number(result.Music[index][8]) - 1];
+            if (typeof ensemble == 'undefined') {
+                ensemble = '-'
+            }
+            let parts = '-';
+            if (typeof result.Music[index][9] != 'object') {
+                parts = result.Music[index][9]
+            }
+            let remarks = '-';
+            if (typeof result.Music[index][10] != 'object') {
+                remarks = result.Music[index][10]
+            }
+
             strHTMLcontent += "<tr>"+
-            // Data                                     // [0] musicID
-            "<td>" + result.Music[index][1] + "</td>" + // [1] Catalogue Number [2] categoryID
-            "<td>" + result.Music[index][3] + "</td>" + // [3] title
-            "<td>" + result.Music[index][4] + "</td>" + // [4] composer
-            "<td>" + result.Music[index][5] + "</td>" + // [5] arranger
-            "<td>" + result.Music[index][6] + "</td>" + // [6] publisher
-            "<td>" + result.Music[index][7] + "</td>" + // [7] featuredInstrument
-            "<td>" + result.Music[index][8] + "</td>" + // [8] ensembleID               change ensembleID to ensemble
-            "<td>" + result.Music[index][9] + "</td>" + // [9] parts
-            "<td>" + result.Music[index][10] + "</td>"; // [10] remarks
+            // Data
+            "<td>" + catalogueNo + "</td>" +
+            "<td>" + title + "</td>" +
+            "<td>" + composer + "</td>" +
+            "<td>" + arranger + "</td>" +
+            "<td>" + publisher + "</td>" +
+            "<td>" + featInstru + "</td>" +
+            "<td>" + ensemble + "</td>" +
+            "<td>" + parts + "</td>" +
+            "<td>" + remarks + "</td>";
         }
     }
     else {
@@ -120,7 +157,7 @@ function successDisplayAdminTable(result) {
     strHTMLcontent = "<table id=\"results\" class='table table-bordered table-hover table-dark'>" +
         "<thead class='thead-light'>" +
         "<tr>" +
-        "<th>Catalogue Number</th>" +
+        "<th >Catalogue Number</th>" +
         "<th>Title</th>" +
         "<th>Composer</th>" +
         "<th>Arranger</th>" +
@@ -136,22 +173,53 @@ function successDisplayAdminTable(result) {
     var jObjects = result.Music
     if (jObjects.length > 0) { // Check if there are any results:
         for (var index in jObjects) {
-            let musicID = result.Music[index].musicID
-            // console.log(result.Music[index])
+            let musicID = result.Music[index][0];
+            let catalogueNo = result.Music[index][1];
+            let catID = result.Music[index][2];
+            let title = result.Music[index][3];
+            let composer = '-';
+            if (type(result.Music[index][5]) != 'null') {
+                composer = result.Music[index][5]
+            }
+            let arranger = '-';
+            if (result.Music[index][5] != 'null') {
+                arranger = result.Music[index][5]
+            }
+            let publisher = '-';
+            if (result.Music[index][6] != 'null') {
+                publisher = result.Music[index][6]
+            }
+            let featInstru = '-';
+            if (result.Music[index][7] != 'null') {
+                featInstru = result.Music[index][7]
+            }
+            let ensemble = ensembleList[Number(result.Music[index][8]) - 1];
+            if (type(ensemble) == undefined) {
+                ensemble = '-'
+            }
+            let parts = '-';
+            if (result.Music[index][9] != 'null') {
+                parts = result.Music[index][9]
+            }
+            let remarks = '-';
+            if (result.Music[index][10] != 'null') {
+                remarks = result.Music[index][10]
+            }
+
             strHTMLcontent += "<tr>"+
-            // Data                                     // [0] musicID
-            "<td>" + result.Music[index][1] + "</td>" + // [1] Catalogue Number [2] categoryID
-            "<td>" + result.Music[index][3] + "</td>" + // [3] title
-            "<td>" + result.Music[index][4] + "</td>" + // [4] composer
-            "<td>" + result.Music[index][5] + "</td>" + // [5] arranger
-            "<td>" + result.Music[index][6] + "</td>" + // [6] publisher
-            "<td>" + result.Music[index][7] + "</td>" + // [7] featuredInstrument
-            "<td>" + result.Music[index][8] + "</td>" + // [8] ensembleID               change ensembleID to ensemble
-            "<td>" + result.Music[index][9] + "</td>" + // [9] parts
-            "<td>" + result.Music[index][10] + "</td>" +// [10] remarks
+            // Data
+            "<td>" + catalogueNo + "</td>" +
+            "<td>" + title + "</td>" +
+            "<td>" + composer + "</td>" +
+            "<td>" + arranger + "</td>" +
+            "<td>" + publisher + "</td>" +
+            "<td>" + featInstru + "</td>" +
+            "<td>" + ensemble + "</td>" +
+            "<td>" + parts + "</td>" +
+            "<td>" + remarks + "</td>" +
 
             // delete button
-            "<td>" + deleteBtn + "</td>";
+            "<td>" + deleteBtn + "</td>"; // DOESNT WORK YET
         }
     }
     else {
