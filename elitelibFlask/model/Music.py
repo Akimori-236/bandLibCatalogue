@@ -11,7 +11,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music'
+            sql = 'SELECT * FROM music ORDER BY catalogueNo'
             cursor.execute(sql)
             allMusic = cursor.fetchall()
             return allMusic
@@ -20,38 +20,19 @@ class Music:
             print('Connection released')
 
 
-    # GET music by pages
+    # GET music by categoryID
     @classmethod
-    def getMusicByPage(cls, page, rowCount):
-        offset = (page-1)*rowCount
+    def getMusicByCatID(cls, catID):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music LIMIT %s, %s'
-            values = tuple(offset, rowCount)
-            cursor.execute(sql, values)
-            pageOfMusic = cursor.fetchall()
-            return pageOfMusic
+            sql = 'SELECT * FROM music WHERE categoryID=%s'
+            cursor.execute(sql, (catID,))
+            music = cursor.fetchall()
+            return music
         finally:
             dbConn.close()
             print('Connection released')
-
-    # GET total count of music
-    @classmethod
-    def getTotalMusicCount(cls):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT COUNT(musicID) FROM music'
-            cursor.execute(sql)
-            musicCount = cursor.fetchall()
-            return musicCount
-        finally:
-            dbConn.close()
-            print('Connection released')
-
-
-
 
 
     # Get music by musicID
@@ -60,9 +41,8 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * from music WHERE musicID=%s'
-            values = tuple(str(musicID))
-            cursor.execute(sql, values)
+            sql = 'SELECT * FROM music WHERE musicID=%s'
+            cursor.execute(sql, (musicID,))
             music = cursor.fetchall()
             return music
         finally:
@@ -77,8 +57,7 @@ class Music:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
             sql = "SELECT * from music WHERE title LIKE concat('%', %s, '%')"
-            values = tuple(substring)
-            cursor.execute(sql, values)
+            cursor.execute(sql, (substring,))
             music = cursor.fetchall()
             return music
         finally:
@@ -93,7 +72,7 @@ class Music:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
             sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleID`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = tuple(
+            cursor.execute(sql, (
                 jsonMusic['catalogueNo'],
                 jsonMusic['categoryID'],
                 jsonMusic['title'],
@@ -103,8 +82,8 @@ class Music:
                 jsonMusic['featuredInstrument'],
                 jsonMusic['ensembleID'],
                 jsonMusic['parts'],
-                jsonMusic['remarks'])
-            cursor.execute(sql, values)
+                jsonMusic['remarks']
+                ))
             dbConn.commit()
             rows = cursor.rowcount
             return rows
@@ -120,8 +99,7 @@ class Music:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
             sql="DELETE from music WHERE musicID=%s"
-            values = tuple(musicID)
-            cursor.execute(sql, values)
+            cursor.execute(sql, (musicID,))
             dbConn.commit()
             rows=cursor.rowcount
             return rows
@@ -132,21 +110,17 @@ class Music:
 
     # Wipe out current table and create new with CSV data
     @classmethod
-    def DBReset(cls, filePath):
+    def parseCSV(cls, filePath):
         rows = 0
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            
+
             # Wipe out current Table
-            sql = "DROP TABLE music;"
+            sql = "TRUNCATE TABLE music;"
             cursor.execute(sql)
             dbConn.commit()
-            # Make new Table
-            sql = "CREATE TABLE `music` (`musicID` INT NOT NULL AUTO_INCREMENT, `catalogueNo` VARCHAR(45) NOT NULL, `categoryID` INT NOT NULL , `title` VARCHAR(255) NOT NULL, `composer` VARCHAR(255) NULL, `arranger` VARCHAR(255) NULL, `publisher` VARCHAR(255) NULL, `featuredInstrument` VARCHAR(255) NULL, `ensembleID` INT NULL, `parts` VARCHAR(255) NULL, `remarks` VARCHAR(255) NULL, PRIMARY KEY (`musicID`), UNIQUE INDEX `catalogueNo_UNIQUE` (`catalogueNo` ASC));"
-            cursor.execute(sql)
-            dbConn.commit()
-            
+
             # CVS Column Names
             col_names = ['Catalogue Number','Title','Composer', 'Arranger', 'Publisher', 'Featured Instrument(s)', 'Ensemble Type', 'Parts', 'Remarks']
             # Use Pandas to parse the CSV file
@@ -154,6 +128,7 @@ class Music:
 
             # Loop through the Rows
             for i,row in csvData.iterrows():
+
                 catalogueNo = row['Catalogue Number']
                 categoryID = int((row['Catalogue Number'])[:2]) + 1     # extract catID from catNo
                 title = row['Title']
@@ -164,7 +139,7 @@ class Music:
                 ensembleID = ensembleList.index(row['Ensemble Type'])   # convert ensemble into ensembleID
                 parts = row['Parts']
                 remarks = row['Remarks']
-                
+
                 sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleID`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleID, parts, remarks)
                 cursor.execute(sql, values)

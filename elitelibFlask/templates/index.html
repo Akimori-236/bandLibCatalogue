@@ -6,7 +6,8 @@
 <!-- get all music on load -->
 <script>
     $(function() {
-    getAllMusic();
+    // getAllMusic();
+    // getTotalMusicCount();
     // getMusicByPage(1);
 })
 </script>
@@ -15,15 +16,58 @@
 
 <!-- MAIN DISPLAY -->
 <div class="container-fluid w-100">
-    <div id="pagination">
-        <!--Pagination-->
+
+    <!-- CATEGORY SELECTOR -->
+    <div class="mb-3">
+        <select class="form-select" id="category" onchange="selectCategory(this);">
+            <option selected>Categories</option>
+            <option value="00">Non-Published</option>
+            <option value="10">Wind Band</option>
+            <option value="11">Wind Band (A5)</option>
+            <option value="12">Ceremonial Music</option>
+            <option value="13">Foreign Anthems</option>
+            <option value="14">Wind Band Training</option>
+            <option value="20">Flute</option>
+            <option value="21">Oboe</option>
+            <option value="22">Cor Anglais</option>
+            <option value="23">Bassoon</option>
+            <option value="24">Clarinet</option>
+            <option value="25">Saxophone</option>
+            <option value="30">French Horn</option>
+            <option value="31">Trumpet</option>
+            <option value="32">Trombone</option>
+            <option value="33">Euphonium</option>
+            <option value="34">Tuba</option>
+            <option value="40">Strings</option>
+            <option value="41">Piano</option>
+            <option value="42">Harp / Guitar</option>
+            <option value="50">Percussion</option>
+            <option value="60">Recorder</option>
+            <option value="61">Vocal</option>
+            <option value="70">Woodwind Ensemble</option>
+            <option value="71">Brass Ensemble</option>
+            <option value="72">Mixed Ensemble</option>
+            <option value="73">Flexible Ensemble</option>
+            <option value="74">Big Band</option>
+            <option value="80">Reference</option>
+            <option value="81">Theory Papers (Grade 5)</option>
+            <option value="82">Theory Papers (Grade 6)</option>
+            <option value="83">Theory Papers (Grade 7)</option>
+            <option value="84">Theory Papers (Grade 8)</option>
+            <option value="85">Theory Material</option>
+            <option value="86">Aural Material</option>
+            <option value="90">Wind Band / Orchestra Discs</option>
+            <option value="91">Instrument / Chamber Discs</option>
+            <option value="92">Misc / Archive Discs</option>
+            <option value="93">Wind Band Training Discs</option>
+            <option value="94">Marching Band Discs</option>
+        </select>
     </div>
+
     <div class="table-responsive" id="searchResults">
         <!-- Results Table -->
     </div>
-    <div id="pagination">
-        <!--Pagination-->
-    </div>
+
 </div>
 
 

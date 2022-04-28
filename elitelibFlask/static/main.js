@@ -26,29 +26,14 @@ const deleteBtn = `<button type="button" class="btn btn-outline-danger">
 </button>`;
 
 
-// get total music count
-function getMusicCount() {
-    var musicCounter = 0;
-    var paginationHTML = "";
 
-    $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/music/totalcount',
-        type: "GET",
-        dataType: 'json',
-        success: displayPagination,
-        error: showErrorMsg,
-    })
-
-    return false;
-}
-
-// Show all sheet music
-function getAllMusic() {
-
+// Show music by category
+function selectCategory() {
+    var categoryID = $('#category').val();
     var strHTMLcontent = ""; // insert search result
-
+    console.log("Getting Category:" + String(categoryID));
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/music',
+        url: 'http://elitelib22.pythonanywhere.com/category/' + String(categoryID),
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -59,21 +44,43 @@ function getAllMusic() {
 }
 
 
-// Show sheet music by page
-// function getMusicByPage(page) {
 
-//     var strHTMLcontent = ""; // insert search result
+// // get total music count
+// function getMusicCount() {
+//     var musicCounter = 0;
+//     var paginationHTML = "";
 
 //     $.ajax({
-//         url: 'http://elitelib22.pythonanywhere.com/music?page=' + String(page),
-//         type: 'GET',
+//         url: 'http://elitelib22.pythonanywhere.com/music/totalcount/',
+//         type: "GET",
 //         dataType: 'json',
-//         success: successDisplayAdminTable,
+//         success: displayPagination,
 //         error: showErrorMsg,
-//     });
+//     })
 
 //     return false;
 // }
+
+
+
+// Show all sheet music
+function getAllMusic() {
+
+    var strHTMLcontent = ""; // insert search result
+
+    $.ajax({
+        url: 'http://elitelib22.pythonanywhere.com/music/',
+        type: 'GET',
+        dataType: 'json',
+        success: successDisplayTable,
+        error: showErrorMsg,
+    });
+
+    return false;
+}
+
+
+
 
 // Display all music in a table
 function successDisplayTable(result) {
@@ -152,6 +159,7 @@ function successDisplayTable(result) {
 
 
 
+
 // Error message
 function showErrorMsg(xhr, status, strErr) {
   $('#searchResults').html('<p>An error has occurred</p>');
@@ -163,7 +171,7 @@ function showErrorMsg(xhr, status, strErr) {
 function deleteMusicByID(musicID) {
     if (confirm("Confirm delete music?")) {
         $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/music' + String(musicID),
+            url: 'http://elitelib22.pythonanywhere.com/music/' + String(musicID),
             type: 'DELETE',
             dataType: 'json',
             success: getAllMusic,
