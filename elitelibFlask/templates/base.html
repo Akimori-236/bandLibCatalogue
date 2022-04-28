@@ -26,22 +26,25 @@
         <!-- CSS -->
         <link rel="stylesheet" href="../static/styles.css" />
         <!-- Javascript -->
-        <!--<script type="text/javascript" src="index.js"></script>-->
+        <script type="text/javascript" src="../static/main.js"></script>
+
     </head>
 
 
 
     <body>
-        <div class="container-fluid vh-100">
+        <div class="container-fluid">
             <!--NAV Row-->
             <div class="mb-3">
                     {% include 'navbar.html' %}
             </div>
             <div class="row mt-3">
                 <div class="">
+
                     {% block content %}
                     <!-- content from other templates -->
                     {% endblock %}
+
                 </div>
             </div>
         </div>

@@ -7,6 +7,7 @@
 <script>
     $(function() {
     getAllMusic();
+    // getTotalMusicCount();
     // getMusicByPage(1);
 })
 </script>
@@ -15,15 +16,22 @@
 
 <!-- MAIN DISPLAY -->
 <div class="container-fluid w-100">
-    <div id="pagination">
-        <!--Pagination-->
+
+    <div class="">
+        <select class="form-select"></select>
+            <option selected>Ensemble Type</option>
+            {% for ensemble in ensembleList %}
+            
+            <option value="{{ensembleList.index}}">{{ensemble}}</option>
+
+            {% endfor %}
+        </select>
     </div>
+
     <div class="table-responsive" id="searchResults">
         <!-- Results Table -->
     </div>
-    <div id="pagination">
-        <!--Pagination-->
-    </div>
+
 </div>
 
 
