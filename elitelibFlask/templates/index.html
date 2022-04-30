@@ -6,6 +6,7 @@
 <!-- get all music on load -->
 <script>
     $(function() {
+        console.log("Page loaded.")
     // getAllMusic();
     // getTotalMusicCount();
     // getMusicByPage(1);
@@ -19,8 +20,8 @@
 
     <!-- CATEGORY SELECTOR -->
     <div class="mb-3">
-        <select class="form-select" id="category" onchange="selectCategory(this);">
-            <option selected>Categories</option>
+        <select class="form-select w-auto mx-auto d-block" id="category" onchange="selectCategory();">
+            <option selected disabled hidden>Categories</option>
             <option value="00">Non-Published</option>
             <option value="10">Wind Band</option>
             <option value="11">Wind Band (A5)</option>

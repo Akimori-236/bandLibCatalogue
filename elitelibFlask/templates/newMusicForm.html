@@ -2,25 +2,77 @@
 
 {% block  content %}
 
-<div class="card bg-dark mx-auto border border-danger rounded-3">
+<script>
+    $(function() {
+        populateEnsembleList();
+    })
+</script>
+
+<div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
     <form>
-        <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            <div id="emailHelp" class="form-text">
-                We'll never share your email with anyone else.
+        <h2 class='text-light mb-3 text-center'>Insert New  Music</h2>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="catalogueNoID" required>
+                <label for="catalogueNoID" class="form-label">Catalogue Number</label>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1">
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="titleID" required>
+                <label for="titleID" class="form-label">Title</label>
+            </div>
         </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="composerID">
+                <label for="composerID" class="form-label">Composer</label>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="arrangerID">
+                <label for="arrangerID" class="form-label">Arranger</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="publisherID">
+                <label for="publisherID" class="form-label">Publisher</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="featID">
+                <label for="featID" class="form-label">Featured Instrument(s)</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <select class="form-select" id="ensembleID">
+                    <!-- Ooptions populated on load -->
+                </select>
+                <label for="ensembleID">Ensemble Type</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="partsID">
+                <label for="partsID" class="form-label">Parts</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave remarks here" id="remarksID"></textarea>
+                <label for="remarksID" class="form-label">Remarks</label>
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-danger mx-auto my-3" onclick="insertMusic()">Submit</button>
+        <!--reset button?-->
     </form>
 </div>
+
 
 {% endblock %}

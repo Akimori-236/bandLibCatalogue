@@ -9,6 +9,13 @@ const ensembleList = [
     "Reference",
     "Others"
 ];
+function populateEnsembleList() {
+    var output = '<option selected>Ensemble Types</option>'
+    for (let i=0; i < ensembleList.length; i++) {
+        output += '<option value="'+(i+1)+'">'+ ensembleList[i] +'</option>'
+    }
+    $('#ensembleList').html(output)
+}
 
 // DELETE BUTTON
 const deleteBtn = `<button type="button" class="btn btn-outline-danger">
@@ -160,6 +167,23 @@ function successDisplayTable(result) {
 
 
 
+// Insert Music
+function insertMusic() {
+    if (confirm("Confirm insert music?")) {
+        $.ajax({
+            url: 'http://elitelib22.pythonanywhere.com/newmusic/',
+            type: 'POST',
+            dataType: 'json',
+            success: getAllMusic, // try to flask-flash success msg on insert music page
+            error: showErrorMsg,
+        });
+    } else {
+        console.log("Cancelled insertion of music");
+    }
+}
+
+
+
 // Delete music
 function deleteMusicByID(musicID) {
     if (confirm("Confirm delete music?")) {
@@ -171,7 +195,7 @@ function deleteMusicByID(musicID) {
             error: showErrorMsg,
         });
     } else {
-        console.log("Cancelled deletion of movie no." + String(musicID));
+        console.log("Cancelled deletion of music no." + String(musicID));
     }
 }
 
@@ -183,7 +207,7 @@ function showErrorMsg(xhr, status, strErr) {
                             '<div class="card-body">' +
                             '<h5 class="card-title text-light text-center">Error 404</h5>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">Sorry ah, cannot find.</h6>' +
-                            '<p class="card-text text-light">Aiyo what did you do, double check your inputs and try again.</p>' +
+                            '<p class="card-text text-light">Hello, please double check your inputs and try again.</p>' +
                             '</div>' +
                             '</div>'
                             );
