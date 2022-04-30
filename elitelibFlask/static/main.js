@@ -85,9 +85,10 @@ function getAllMusic() {
 // Display all music in a table
 function successDisplayTable(result) {
     $('#searchResults').html("");
-    strHTMLcontent = "<table id=\"results\" class='table table-bordered table-hover table-dark'>" +
+    strHTMLcontent = "<a href='/print' class='float-end btn btn-danger mb-3'>Printable Version</a>" +
+        "<table id='results' class='table table-bordered table-hover table-dark'>" +
         "<thead class='thead-light'>" +
-        "<tr class='text-info'>" +
+        "<tr class='text-danger'>" +
         "<th>Catalogue Number</th>" +
         "<th>Title</th>" +
         "<th>Composer</th>" +
@@ -159,14 +160,6 @@ function successDisplayTable(result) {
 
 
 
-
-// Error message
-function showErrorMsg(xhr, status, strErr) {
-  $('#searchResults').html('<p>An error has occurred</p>');
-}
-
-
-
 // Delete music
 function deleteMusicByID(musicID) {
     if (confirm("Confirm delete music?")) {
@@ -181,3 +174,19 @@ function deleteMusicByID(musicID) {
         console.log("Cancelled deletion of movie no." + String(musicID));
     }
 }
+
+
+
+// Error message
+function showErrorMsg(xhr, status, strErr) {
+  $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
+                            '<div class="card-body">' +
+                            '<h5 class="card-title text-light text-center">Error 404</h5>' +
+                            '<h6 class="card-subtitle mb-2 text-muted text-center">Sorry ah, cannot find.</h6>' +
+                            '<p class="card-text text-light">Aiyo what did you do, double check your inputs and try again.</p>' +
+                            '</div>' +
+                            '</div>'
+                            );
+}
+
+

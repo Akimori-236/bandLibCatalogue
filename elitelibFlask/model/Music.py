@@ -26,7 +26,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music WHERE categoryID=%s'
+            sql = 'SELECT * FROM music WHERE categoryID=%s ORDER BY catalogueNo'
             cursor.execute(sql, (catID,))
             music = cursor.fetchall()
             return music

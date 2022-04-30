@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
 import os
 from os.path import join, dirname, realpath
 from model.Music import Music
@@ -28,12 +28,14 @@ def admin():
 # about
 @app.route('/about')
 def about():
-    return render_template("about.html", title="Band Digitalization Team 2022", team=["ME2 Joe Tan", "ME1 Ng Wee Seng", "ME1 Vignesh", "ME1 Gerald Lim", "ME1 Kenneth Low"])
+    return render_template("about.html", title="Band Digitalization Team 2022", team=["ME2-2 Joe Tan", "ME1-2 Ng Wee Seng", "ME1-2 Vignesh", "ME1-2 Gerald Lim", "ME1-2 Kenneth Low"])
 
 # upload csv form
 @app.route('/uploadcsv')
 def uploadCSV():
     return render_template("uploadcsv.html", title="Restore Database")
+
+
 
 # # ERRORS
 @app.errorhandler(500)
@@ -126,8 +128,13 @@ def searchMusicByTitle():
         return {}, 500       # Internal Server Error
 
 
+# form for Inserting new music
+@app.route('/newmusic')
+def newMusicForm():
+    return render_template("newMusicForm.html", title="Insert New Music Into Catalogue")
+
 # INSERT new music [not tested]
-@app.route('/music', methods=['POST'])
+@app.route('/newmusic', methods=['POST'])
 def insertMusic():
     try:
         jsonMusic = request.json
