@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% include 'adminbar.html' %}
+
+{% block  content %}
+<script>
+    $(function() {
+        //populateEnsembleList();
+        console.log('Page Loaded.')
+    })
+</script>
+
+<div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
+    <form class="" id="searchID" action="#" onsubmit="return deleteMusicByCatNo();">
+        <h2 class='text-light mb-3 text-center'>Condemn Music</h2>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="catalogueNoID" required>
+                <label for="catalogueNoID" class="form-label">Catalogue Number</label>
+            </div>
+            <button class="btn btn-danger rounded-pill" onclick="return getMusicByCatNo();">Load Details</button>
+        </div>
+
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="titleID" readonly>
+                <label for="titleID" class="form-label text-light">Title</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="composerID" readonly>
+                <label for="composerID" class="form-label text-light">Composer</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="arrangerID" readonly>
+                <label for="arrangerID" class="form-label text-light">Arranger</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="publisherID" readonly>
+                <label for="publisherID" class="form-label text-light">Publisher</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="featID" readonly>
+                <label for="featID" class="form-label text-light">Featured Instrument(s)</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="ensembleID" readonly>
+                <label for="ensembleID" class="form-label text-light">Ensemble Type</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-1 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control bg-dark text-light" id="partsID" readonly>
+                <label for="partsID" class="form-label text-light">Parts</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <textarea class="form-control bg-dark text-light" placeholder="Leave remarks here" id="remarksID" readonly></textarea>
+                <label for="remarksID" class="form-label text-light">Remarks</label>
+            </div>
+        </div>
+
+        <input class="btn btn-danger mx-auto my-3 d-block" type="submit" value="Delete"/>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -35,8 +35,17 @@ def about():
 def uploadCSV():
     return render_template("uploadcsv.html", title="Restore Database")
 
+# form for Inserting new music
+@app.route('/newmusic')
+def newMusicForm():
+    return render_template("insertmusic.html", title="Insert New Music Into Catalogue")
 
+# delete music page
+@app.route('/deletemusic')
+def deleteSelectionPage():
+    return render_template("deletemusic.html", title="Condemn Sheet Music")
 
+#######################
 # # ERRORS
 @app.errorhandler(500)
 def error500(e):
@@ -81,6 +90,22 @@ def getMusicByCatID(catID):
         return {}, 500      # internal server error
 
 
+# # GET music by ensemble type
+@app.route('/ensemble/<ensemble>')
+def getMusicByEnsembleType(ensemble):
+    try:
+        jsonMusic = Music.getMusicByEnsembleType(ensemble)
+        if len(jsonMusic)>0:
+            output = {"Music": jsonMusic}
+            return jsonify(output), 200     # OK
+        else:
+            output = {}
+            return jsonify(output), 404     # Not found
+    except Exception as err:
+        print(err)
+        return {}, 500      # internal server error
+
+
 # GET one music by musicID
 @app.route('/music/<int:musicID>')
 def getOneMusic(musicID):
@@ -98,25 +123,78 @@ def getOneMusic(musicID):
         return {}, 500      # internal server error
 
 
-#DELETE music by musicID
-@app.route('/music/<int:musicID>', methods=['DELETE'])
-# @requireAdmin
-def deleteMusicByID(musicID):
+# GET one music by catNo
+@app.route('/music/catno/<catNo>')
+def getMusicByCatNo(catNo):
     try:
-        rows = Music.deleteMusicByID(musicID)
-        output = {"Rows Affected": rows}
-        return jsonify(output), 200
+        jsonMusic = Music.getMusicByCatNo(catNo)
+
+        if len(jsonMusic)>0:
+            output = {"Music": jsonMusic}
+            return jsonify(output), 200     # OK
+        else:
+            output = {}
+            return jsonify(output), 404     # Not found
     except Exception as err:
         print(err)
-        return {}, 500
+        return {}, 500      # internal server error
 
 
-# SEARCH music by title [not working]
+
+# SEARCH music by title
 @app.route('/search/title',methods=['GET'])
 def searchMusicByTitle():
     try:
-        substring = request.args['substring']   # will be request.form for POST method
-        music = Music.searchMusicByTitle(substring)
+        query = request.args['q']           # use request.form for POST method
+        music = Music.searchMusicByTitle(query)
+        if len(music) > 0:
+            output = {"Music": music}
+            return jsonify(output), 200      # OK
+        else:
+            output = {}
+            return jsonify(output), 404      # Not Found
+    except Exception as err:
+        print(err)
+        return {}, 500       # Internal Server Error
+
+# SEARCH music by composer/arranger
+@app.route('/search/comparr',methods=['GET'])
+def searchMusicByCompArr():
+    try:
+        query = request.args['q']           # use request.form for POST method
+        music = Music.searchMusicByCompArr(query)
+        if len(music) > 0:
+            output = {"Music": music}
+            return jsonify(output), 200      # OK
+        else:
+            output = {}
+            return jsonify(output), 404      # Not Found
+    except Exception as err:
+        print(err)
+        return {}, 500       # Internal Server Error
+
+# SEARCH music by publisher
+@app.route('/search/publisher',methods=['GET'])
+def searchMusicByPublisher():
+    try:
+        query = request.args['q']           # use request.form for POST method
+        music = Music.searchMusicByPublisher(query)
+        if len(music) > 0:
+            output = {"Music": music}
+            return jsonify(output), 200      # OK
+        else:
+            output = {}
+            return jsonify(output), 404      # Not Found
+    except Exception as err:
+        print(err)
+        return {}, 500       # Internal Server Error
+
+# SEARCH music by Featured Instrument
+@app.route('/search/feat',methods=['GET'])
+def searchMusicByFeatInstru():
+    try:
+        query = request.args['q']           # use request.form for POST method
+        music = Music.searchMusicByFeatInstru(query)
         if len(music) > 0:
             output = {"Music": music}
             return jsonify(output), 200      # OK
@@ -128,10 +206,22 @@ def searchMusicByTitle():
         return {}, 500       # Internal Server Error
 
 
-# form for Inserting new music
-@app.route('/newmusic')
-def newMusicForm():
-    return render_template("newMusicForm.html", title="Insert New Music Into Catalogue")
+
+#DELETE music by CatNo
+@app.route('/music/<catNo>', methods=['DELETE'])
+# @requireAdmin
+def deleteMusicByCatNo(catNo):
+    try:
+        rows = Music.deleteMusicByCatNo(catNo)
+        if rows > 0:
+            flash("FlashMsg: Music deleted successfully", "success")
+        output = {"Rows Affected": rows}
+        return jsonify(output), 200
+    except Exception as err:
+        print(err)
+        return {}, 500
+
+
 
 # INSERT new music [not tested]
 @app.route('/newmusic', methods=['POST'])
@@ -139,6 +229,8 @@ def insertMusic():
     try:
         jsonMusic = request.json
         rows = Music.insertMusic(jsonMusic)
+        if rows > 0:
+            flash("Music inserted successfully", "info")
         output = {"Music Inserted": rows}
         return jsonify(output), 201     # Successful creation
     except Exception as err:
@@ -182,53 +274,6 @@ def restoreDB():
 def Login():
     return render_template("login.html", title="Librarian Login")
 
-# # GET all users
-# @app.route('/users')    # GET method by default
-# @validateJWTToken
-# @requireAdmin
-# def getAllUsers():
-
-#     print("g context role:"+g.role)
-#     print("g context userid:"+str(g.userid))
-#     try:
-#         jsonUsers = User.getAllUsers()
-#         output = {"Users": jsonUsers}
-#         return jsonify(output), 200     # OK
-#     except Exception as err:
-#         print(err)
-#         return {}, 500      # internal server error
-
-# # GET one user by provided userID
-# @app.route('/users/<int:userid>')   # GET method by default
-# @validateJWTToken
-# def getOneUser(userid):
-
-#     print("g context role:"+g.role)
-#     print("g context userid:"+str(g.userid))
-#     try:
-#         jsonUser = User.getUserById(userid)
-
-#         if len(jsonUser)>0:
-#             output = {"User": jsonUser}
-#             return jsonify(output), 200     # OK
-#         else:
-#             output = {}
-#             return jsonify(output), 404     # Not found
-#     except Exception as err:
-#         print(err)
-#         return {}, 500      # internal server error
-
-# #DELETE user with specified userid
-# @app.route('/users/<int:userid>',methods=['DELETE'])
-# def deleteUser(userid):
-#     try:
-#         rows = User.deleteUser(userid)
-#         output = {"Rows Affected": rows}
-#         return jsonify(output), 200
-#     except Exception as err:
-#         print(err)
-#         return {}, 500
-
 # # ISSUE JWTs / LOGIN
 # @app.route('/users/login', methods=['POST']) # POST as token creation
 # def loginUser():
@@ -242,21 +287,4 @@ def Login():
 #     except Exception as err:
 #         print(err)
 #         return {},500
-
-
-# # INSERT new user
-# @app.route('/users', methods=['POST'])
-# @validateRegex
-# def insertUser():
-#     try:
-#         jsonUser = request.json
-#         rows = User.insertUser(jsonUser)
-#         output = {"Users Inserted": rows}
-#         return jsonify(output), 201     # Successful creation
-#     except Exception as err:
-#         print(err)
-#         return {},500
-
-
-
 

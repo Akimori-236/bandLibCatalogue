@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% include 'adminbar.html' %}
+
+{% block  content %}
+
+<div class="card bg-dark mx-auto border border-danger rounded-3" style="width: 25rem;">
+    <div class="card-body">
+
+        <!--LOGIN FORM-->
+      <form method="POST" action="" enctype="multipart/form-data">
+          <div class="form-group">
+              <img class="mx-auto d-block" src="static/CIA_Old.svg" height=100 width=100>
+              <h2 class="text-danger text-center">DO NOT PROCEED UNLESS ABSOLUTELY SURE</h2>
+              <h6 class="text-danger text-center">THIS WILL WIPE OUT THE CURRENT DATABASE AND INSTALL THE UPLOADED FILE</h6>
+          </div>
+
+          <div class="form-group">
+            <label for="fileID">Upload File</label>
+            <input type="file" class="form-control" id="fileID" aria-describedby="uploadHelp">
+            <small id="uploadHelp" class="form-text text-light">Please triple check your file ah!</small>
+          </div>
+
+          <button type="submit" class="btn btn-danger mt-3 mx-auto d-block">Upload</button>
+        </form>
+    </div>
+  </div>
+
+{% endblock %}

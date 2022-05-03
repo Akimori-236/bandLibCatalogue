@@ -26,23 +26,35 @@
         <!-- CSS -->
         <link rel="stylesheet" href="../static/styles.css" />
         <!-- Javascript -->
-        <!--<script type="text/javascript" src="index.js"></script>-->
+        <script type="text/javascript" src="../static/main.js"></script>
+
     </head>
 
 
 
     <body>
-        <div class="container-fluid vh-100">
-            <!--NAV Row-->
-            <div class="mb-3">
-                    {% include 'navbar.html' %}
-            </div>
-            <div class="row mt-3">
-                <div class="">
-                    {% block content %}
-                    <!-- content from other templates -->
-                    {% endblock %}
+        <div class="container-fluid">
+            <div class="row">
+                <!--flask-flash message box-->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="mb-1"></div>
+                        {% for category, msg in messages %}
+                                <p class="mb-1 {{category}}">{{ msg }}</p>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!--message box-->
+                <div id="msgBox">
                 </div>
+
+                {% block content %}
+                <!-- content from other templates -->
+                {% endblock %}
+
+
             </div>
         </div>
     </body>

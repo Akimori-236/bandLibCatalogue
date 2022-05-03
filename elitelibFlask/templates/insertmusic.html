@@ -1,16 +1,28 @@
 {% extends 'base.html' %}
+{% include 'adminbar.html' %}
 
 {% block  content %}
-
 <script>
     $(function() {
         populateEnsembleList();
+        populateCategoryList();
+        console.log('Page Loaded.');
     })
 </script>
 
+
+
 <div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
-    <form>
-        <h2 class='text-light mb-3 text-center'>Insert New  Music</h2>
+    <form  class="" id="searchID" action="#" onsubmit="return insertMusic();">
+        <h2 class='text-light mb-3 text-center'>Insert New Music</h2>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <select class="form-select" id="categoryList" required>
+                    <!-- Options populated on load -->
+                </select>
+                <label for="categoryList" class="form-label">Category</label>
+            </div>
+        </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="form-floating">
                 <input type="text" class="form-control" id="catalogueNoID" required>
@@ -49,7 +61,7 @@
         </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="form-floating">
-                <select class="form-select" id="ensembleID">
+                <select class="form-select" id="ensembleList">
                     <!-- Ooptions populated on load -->
                 </select>
                 <label for="ensembleID">Ensemble Type</label>
@@ -68,9 +80,7 @@
             </div>
         </div>
 
-
-        <button type="submit" class="btn btn-danger mx-auto my-3" onclick="insertMusic()">Submit</button>
-        <!--reset button?-->
+        <input class="btn btn-danger mx-auto my-3 d-block" type="submit" value="Submit"/>
     </form>
 </div>
 

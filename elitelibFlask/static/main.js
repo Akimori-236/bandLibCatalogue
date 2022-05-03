@@ -10,11 +10,61 @@ const ensembleList = [
     "Others"
 ];
 function populateEnsembleList() {
-    var output = '<option selected>Ensemble Types</option>'
+    var output = '<option selected disabled hidden>Ensemble Types</option>'
     for (let i=0; i < ensembleList.length; i++) {
         output += '<option value="'+(i+1)+'">'+ ensembleList[i] +'</option>'
     }
     $('#ensembleList').html(output)
+}
+
+// Categories
+const categories = [['00', 'Non-Published'],
+                    ['10', 'Wind Band'],
+                    ['11', 'Wind Band (A5)'],
+                    ['12', 'Ceremonial Music'],
+                    ['13', 'Foreign Anthem'],
+                    ['14', 'Wind Band Training'],
+                    ['20', 'Flute'],
+                    ['21', 'Oboe'],
+                    ['22', 'Cor Anglais'],
+                    ['23', 'Bassoon'],
+                    ['24', 'Clarinet'],
+                    ['25', 'Saxophone'],
+                    ['30', 'Horn'],
+                    ['31', 'Trumpet'],
+                    ['32', 'Trombone'],
+                    ['33', 'Euphonium'],
+                    ['34', 'Tuba'],
+                    ['40', 'Strings'],
+                    ['41', 'Piano'],
+                    ['42', 'Harp/Guitar'],
+                    ['50', 'Percussion'],
+                    ['60', 'Recorder'],
+                    ['61', 'Vocal'],
+                    ['70', 'Woodwind Ensemble'],
+                    ['71', 'Brass Ensemble'],
+                    ['72', 'Mixed Ensemble'],
+                    ['73', 'Flexible Ensemble'],
+                    ['74', 'Big Band'],
+                    ['80', 'Reference'],
+                    ['81', 'Theory Papers G5'],
+                    ['82', 'Theory Papers G6'],
+                    ['83', 'Theory Papers G7'],
+                    ['84', 'Theory Papers G8'],
+                    ['85', 'Theory Material'],
+                    ['86', 'Aural Material'],
+                    ['90', 'Wind Band/Orch Disc'],
+                    ['91', 'Instrument/Chamber Disc'],
+                    ['92', 'Miscellaneous/Archive Disc'],
+                    ['93', 'Wind Band Training Disc'],
+                    ['94', 'Marching Band Disc']
+];
+function populateCategoryList() {
+    var output = '<option selected disabled hidden>Categories</option>'
+    for (let i=0; i < categories.length; i++) {
+        output += '<option value="'+categories[i][0]+'">'+ categories[i][1] +'</option>'
+    }
+    $('#categoryList').html(output)
 }
 
 // DELETE BUTTON
@@ -36,7 +86,7 @@ const deleteBtn = `<button type="button" class="btn btn-outline-danger">
 
 // Show music by category
 function selectCategory() {
-    var categoryID = $('#category').val();
+    var categoryID = $('#categoryList').val();
     var strHTMLcontent = ""; // insert search result
     console.log("Getting Category:" + String(categoryID));
     $.ajax({
@@ -49,24 +99,6 @@ function selectCategory() {
 
     return false;
 }
-
-
-
-// // get total music count
-// function getMusicCount() {
-//     var musicCounter = 0;
-//     var paginationHTML = "";
-
-//     $.ajax({
-//         url: 'http://elitelib22.pythonanywhere.com/music/totalcount/',
-//         type: "GET",
-//         dataType: 'json',
-//         success: displayPagination,
-//         error: showErrorMsg,
-//     })
-
-//     return false;
-// }
 
 
 
@@ -87,13 +119,58 @@ function getAllMusic() {
 }
 
 
+function getMusicByEnsembleType(ensemble) {
+    $.ajax({
+        url: 'http://elitelib22.pythonanywhere.com/ensemble/' + ensemble,
+        type: 'GET',
+        dataType: 'json',
+        success: successDisplayTable,
+        error: showErrorMsg,
+    });
+    return false;
+}
+
+
+function getMusicByCatNo() {
+    //selectors
+    var catNo = $('#catalogueNoID').val();
+    var title = $('#titleID');
+    var composer = $('#composerID');
+    var arranger = $('#arrangerID');
+    var publisher = $('#publisherID');
+    var featInstru = $('#featID');
+    var ensemble = $('#ensembleID');
+    var parts = $('#partsID');
+    var remarks = $('#remarksID');
+
+    $.ajax({
+        url: 'http://elitelib22.pythonanywhere.com/music/catno/' + catNo,
+        type: 'GET',
+        dataType: 'json',
+        success: function(result) {
+            console.log(result);
+            title.val(result.Music[3]);
+            composer.val(result.Music[4]);
+            arranger.val(result.Music[5]);
+            publisher.val(result.Music[6]);
+            featInstru.val(result.Music[7]);
+            ensemble.val(ensembleList[result.Music[8]-1]);
+            parts.val(result.Music[9]);
+            remarks.val(result.Music[10]);
+            window.title = title.val();
+        },
+        error: showErrorMsg,
+    });
+    return false;
+}
+
 
 
 // Display all music in a table
 function successDisplayTable(result) {
     $('#searchResults').html("");
-    strHTMLcontent = "<a href='/print' class='float-end btn btn-danger mb-3'>Printable Version</a>" +
-        "<table id='results' class='table table-bordered table-hover table-dark'>" +
+    strHTMLcontent = "<a href='/print' class='btn btn-danger m-2'>Printable Version</a>" +
+        "<table id='results' class='table table-bordered table-hover table-dark mx-2'>" +
         "<thead class='thead-light'>" +
         "<tr class='text-danger'>" +
         "<th>Catalogue Number</th>" +
@@ -166,6 +243,24 @@ function successDisplayTable(result) {
 }
 
 
+// search Music
+function searchMusic() {
+    var strHTMLcontent = "";
+    //selector
+    var searchType = $('#searchselectID').val();
+    var query = $('#searchtextboxID').val();
+    console.log('Searching for: ' + query);
+
+    $.ajax({
+        url: 'http://elitelib22.pythonanywhere.com/search/'+ searchType +'?q=' + query,
+        type: 'GET',
+        dataType: 'json',
+        success: successDisplayTable,
+        error: showErrorMsg,
+    });
+    return false;
+}
+
 
 // Insert Music
 function insertMusic() {
@@ -174,7 +269,9 @@ function insertMusic() {
             url: 'http://elitelib22.pythonanywhere.com/newmusic/',
             type: 'POST',
             dataType: 'json',
-            success: getAllMusic, // try to flask-flash success msg on insert music page
+            success: function (result) {
+                $('#msgbox').html('Music inserted successfully: ' + result)
+            },
             error: showErrorMsg,
         });
     } else {
@@ -185,29 +282,49 @@ function insertMusic() {
 
 
 // Delete music
-function deleteMusicByID(musicID) {
-    if (confirm("Confirm delete music?")) {
+function deleteMusicByCatNo() {
+    if (confirm("Confirm delete " + window.title + "?")) {
+        var catNo = $('#catalogueNoID').val();
+
         $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/music/' + String(musicID),
+            url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
             type: 'DELETE',
             dataType: 'json',
-            success: getAllMusic,
+            success: function() {
+                $('#msgbox').html('<p class="btn btn-outline-success">JS: Successfully deleted ' + window.title + '</p>')
+            },
             error: showErrorMsg,
         });
     } else {
-        console.log("Cancelled deletion of music no." + String(musicID));
+        console.log("Cancelled deletion of " + window.title);
     }
 }
 
-
+// about
+function showAbout() {
+  $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
+                            '<div class="card-body">' +
+                            '<h5 class="card-title text-light text-center mb-3">About</h5>' +
+                            '<p class="card-text text-light my-0"> Version 1 made by ME1-2 Ng Wee Seng in April 2022 </p>' +
+                            '<br><br>' +
+                            '<h6 class="card-subtitle mb-2 text-muted text-center">Band Digitalization Team 2022</h6>' +
+                            '<p class="card-text text-light my-0"> ME2-2 Joe Tan </p>' +
+                            '<p class="card-text text-light my-0"> ME1-2 Ng Wee Seng  </p>' +
+                            '<p class="card-text text-light my-0"> ME1-2 Vignesh  </p>' +
+                            '<p class="card-text text-light my-0"> ME1-2 Gerald Lim </p>' +
+                            '<p class="card-text text-light my-0"> ME1-2 Kenneth Low  </p>' +
+                            '</div>' +
+                            '</div>'
+                            );
+}
 
 // Error message
 function showErrorMsg(xhr, status, strErr) {
   $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
                             '<div class="card-body">' +
-                            '<h5 class="card-title text-light text-center">Error 404</h5>' +
-                            '<h6 class="card-subtitle mb-2 text-muted text-center">Sorry ah, cannot find.</h6>' +
-                            '<p class="card-text text-light">Hello, please double check your inputs and try again.</p>' +
+                            '<h5 class="card-title text-light text-center">'+ status +'</h5>' +
+                            '<h6 class="card-subtitle mb-2 text-muted text-center">' + strErr + '</h6>' +
+                            '<p class="card-text text-light text-center">Sorry ah, cannot find.</p>' +
                             '</div>' +
                             '</div>'
                             );

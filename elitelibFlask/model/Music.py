@@ -35,15 +35,45 @@ class Music:
             print('Connection released')
 
 
+    # GET music by ensemble type
+    @classmethod
+    def getMusicByEnsembleType(cls, ensemble):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT * FROM music WHERE ensembleID=%s ORDER BY catalogueNo'
+            cursor.execute(sql, (ensemble,))
+            music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+
     # Get music by musicID
     @classmethod
     def getMusicByID(cls, musicID):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music WHERE musicID=%s'
+            sql = 'SELECT * FROM music WHERE musicID=%s ORDER BY catalogueNo'
             cursor.execute(sql, (musicID,))
             music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+
+    # Get music by catNo
+    @classmethod
+    def getMusicByCatNo(cls, catNo):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT * FROM music WHERE catalogueNo=%s ORDER BY catalogueNo'
+            cursor.execute(sql, (catNo,))
+            music = cursor.fetchone()
             return music
         finally:
             dbConn.close()
@@ -56,7 +86,49 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT * from music WHERE title LIKE concat('%', %s, '%')"
+            sql = "SELECT * from music WHERE title LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            cursor.execute(sql, (substring,))
+            music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # SEARCH music by composer/arranger
+    @classmethod
+    def searchMusicByCompArr(cls, substring):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT * from music WHERE composer LIKE concat('%', %s, '%') OR arranger LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            cursor.execute(sql, (substring, substring))
+            music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # SEARCH music by Publisher
+    @classmethod
+    def searchMusicByPublisher(cls, substring):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT * from music WHERE publisher LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            cursor.execute(sql, (substring,))
+            music = cursor.fetchall()
+            return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # SEARCH music by Featured Instrument
+    @classmethod
+    def searchMusicByFeatInstru(cls, substring):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT * from music WHERE featuredInstrument LIKE concat('%', %s, '%') ORDER BY catalogueNo"
             cursor.execute(sql, (substring,))
             music = cursor.fetchall()
             return music
@@ -92,14 +164,14 @@ class Music:
             print("Connection released.")
 
 
-    # DELETE music by musicID
+    # DELETE music by CatNo
     @classmethod
-    def deleteMusicByID(cls, musicID):
+    def deleteMusicByCatNo(cls, catNo):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql="DELETE from music WHERE musicID=%s"
-            cursor.execute(sql, (musicID,))
+            sql="DELETE from music WHERE catalogueNo=%s"
+            cursor.execute(sql, (catNo,))
             dbConn.commit()
             rows=cursor.rowcount
             return rows

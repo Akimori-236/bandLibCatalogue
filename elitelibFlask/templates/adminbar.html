@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-dark mb-4 border border-danger">
+    <div class="container-fluid">
+
+
+        <!-- Logo -->
+        <a class="navbar-brand ms-2 my-auto" href="/">
+            <img src="../static/logo.png" alt="" height=40 width=40>
+        </a>
+
+
+        <!-- Hamburger Button -->
+        <button class="navbar-toggler navbar-dark"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+
+
+                <!-- 2nd nav link -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-light" aria-current="page" onclick="showAbout();">About</a>
+                </li>
+
+
+
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-light" href="/admin"
+                        >Admin Tools</a>
+                </li>
+            </ul>
+
+
+
+            <!--log in-->
+            <a href="/login" class="my-auto btn btn-danger">Log In</a>
+        </div>
+    </div>
+</nav>
