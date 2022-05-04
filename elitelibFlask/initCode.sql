@@ -30,10 +30,9 @@ CREATE TABLE `ensemble` (
 
 
 CREATE TABLE `user` (
-  `userID` INT NOT NULL,
+  `userID` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
-  `role` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`userID`),
   UNIQUE INDEX `userID_UNIQUE` (`userID` ASC),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC));
@@ -120,3 +119,5 @@ INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publishe
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `ensembleID`) VALUES ('10-0003-01', '10', '1812 OVERTURE SOLENNELLE (1812 OVERTURE)', 'PETER ILYICH TCHAIKOVSKY', 'T. CONWAY BROWN', 'BOOSEY & HAWKES', '1');
 INSERT INTO `music` (`musicID`, `catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`) VALUES ('5', '10-0004-01', '10', 'THE SEVENTH NIGHT OF JULY', 'ITARU SAKAI', 'DE HASKE', '1');
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`, `remarks`) VALUES ('10-0004-02', '10', 'DAIBUTSU TO SHIKA', 'ITARU SAKAI', 'DE HASKE', '1', 'MISSING 1ST SAXOPHONE (NOT ORIGINAL), Eb CLARINET');
+
+INSERT INTO `user` (`username`, `password`) VALUES ('Chief', '3010');

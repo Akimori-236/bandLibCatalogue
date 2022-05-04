@@ -6,49 +6,52 @@
 
 <!--CARD GRID for Admin options-->
 <!--Grid of Cards-->
-<div class="container">
-    <h2 class="text-light">Sheet Music Controls</h2>
-    <div class="row my-4">
-        <div class="col-md-4">
-            <a href="/newmusic" class="card bg-primary ml-2 mt-2 text-decoration-none">
+<div class="col-lg-3">
+</div>
+
+<div class="col-lg-6">
+    <h2 class="text-light text-center">Sheet Music Controls</h2>
+    <div class="card-group my-4">
+        <div class="card col-md-4 bg-primary ml-2 mt-2">
+            <a href="/newmusic" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Insert New Music</h5>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="/deletemusic" class="card bg-danger ml-2 mt-2 text-decoration-none">
+        <div class="card col-md-4 bg-danger ml-2 mt-2">
+            <a href="/deletemusic" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Condemn Music</h5>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="#" class="card bg-info ml-2 mt-2 text-decoration-none">
+        <div class="card col-md-4 bg-info ml-2 mt-2">
+            <a href="#" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Edit Music</h5>
                 </div>
             </a>
         </div>
     </div>
-    <h2 class="text-light">Database Controls</h2>
-    <div class="row">
-        <div class="col-md-4">
-            <a href="/dbexport" class="card bg-primary ml-2 mt-2 text-decoration-none">
+    <h2 class="text-light text-center">Database Controls</h2>
+    <div class="card-group">
+        <div class="card col-md-4 bg-primary ml-2 mt-2">
+            <a href="/dbexport" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Export Database as CSV file</h5>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="/uploadcsv" class="card bg-danger ml-2 mt-2 text-decoration-none">
+        <div class="card col-md-4 bg-danger ml-2 mt-2">
+            <a href="/uploadcsv" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Restore Database with CSV file</h5>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="/print" class="card bg-info ml-2 mt-2 text-decoration-none">
+        <div class="card col-md-4 bg-info ml-2 mt-2">
+            <a href="/print" class="text-decoration-none">
                 <!--<img style="width:100%" src="images/photo1.jpg" alt="">-->
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Print out Database</h5>
@@ -58,4 +61,7 @@
     </div>
 </div>
 
-{% endblock %}  
+<div class="col-lg-3">
+</div>
+
+{% endblock %}

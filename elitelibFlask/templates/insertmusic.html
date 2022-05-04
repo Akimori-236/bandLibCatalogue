@@ -8,6 +8,24 @@
         populateCategoryList();
         console.log('Page Loaded.');
     })
+    function populateAvailableBoxes() {
+        var output = '<option selected disabled hidden>             </option>';
+        let categoryID = $('#categoryList').val();
+        $.ajax({
+            url: 'http://elitelib22.pythonanywhere.com/emptyboxes/' + String(categoryID),
+            type: 'GET',
+            dataType: 'json',
+            success: function(result) {
+                for (let i=0; i < result.Boxes.length; i++) {
+                    output += '<option value="'+ result.Boxes[i] +'">'+ result.Boxes[i] +'</option>'
+                }
+                $('#boxList').html(output)
+            },
+            error: showErrorMsg,
+        });
+        return false;
+        $('#catalogueNoID').val(categoryID);
+    }
 </script>
 
 
@@ -15,17 +33,23 @@
 <div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
     <form  class="" id="searchID" action="#" onsubmit="return insertMusic();">
         <h2 class='text-light mb-3 text-center'>Insert New Music</h2>
-        <div class="row g-3 align-items-center mb-3 mx-3">
-            <div class="form-floating">
-                <select class="form-select" id="categoryList" required>
+        <div class="form-group row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating col-3">
+                <select class="form-select" id="categoryList" onchange="populateAvailableBoxes()" required>
                     <!-- Options populated on load -->
                 </select>
                 <label for="categoryList" class="form-label">Category</label>
             </div>
+            <div class="form-floating col-3">
+                <select class="form-select" id="boxList" required>
+                    <!-- Options populated on load -->
+                </select>
+                <label for="boxList" class="form-label">Box</label>
+            </div>
         </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="form-floating">
-                <input type="text" class="form-control" id="catalogueNoID" required>
+                <input type="text" class="form-control" id="catalogueNoID" readonly>
                 <label for="catalogueNoID" class="form-label">Catalogue Number</label>
             </div>
         </div>

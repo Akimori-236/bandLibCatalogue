@@ -240,7 +240,7 @@ def insertMusic():
 
 ##############################################################
 
-# Restore database by inputting a csv file
+# Restore database by inputting a csv file [not working]
 # Upload folder
 UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
@@ -264,6 +264,17 @@ def restoreDB():
         print(err)
         return {},500
 
+
+# available boxes in given category
+@app.route('/emptyboxes/<catNo>')
+def getEmptyBoxes(catNo):
+    try:
+        boxList = Music.getEmptyBoxes(catNo)
+        output = {"Boxes": boxList}
+        return jsonify(output), 200     # OK
+    except Exception as err:
+        print(err)
+        return {}, 500      # internal server error
 
 
 ###########################################

@@ -162,6 +162,24 @@ class Music:
         finally:
             dbConn.close()
             print("Connection released.")
+            
+    
+    # GET Empty Boxes
+    @classmethod
+    def getEmptyBoxes(cls, catNo):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT catalogueNo FROM music WHERE categoryID=%s ORDER BY catalogueNo"
+            cursor.execute(sql, (catNo,))
+            catalogueNoList = cursor.fetchall()
+            boxList = []
+            for num in catalogueNoList:
+                boxList.append(num[0][3:])
+            return boxList
+        finally:
+            dbConn.close()
+            print('Connection released')
 
 
     # DELETE music by CatNo

@@ -10,7 +10,7 @@ const ensembleList = [
     "Others"
 ];
 function populateEnsembleList() {
-    var output = '<option selected disabled hidden>Ensemble Types</option>'
+    var output = '<option selected disabled hidden>         </option>'
     for (let i=0; i < ensembleList.length; i++) {
         output += '<option value="'+(i+1)+'">'+ ensembleList[i] +'</option>'
     }
@@ -60,7 +60,7 @@ const categories = [['00', 'Non-Published'],
                     ['94', 'Marching Band Disc']
 ];
 function populateCategoryList() {
-    var output = '<option selected disabled hidden>Categories</option>'
+    var output = '<option selected disabled hidden>             </option>'
     for (let i=0; i < categories.length; i++) {
         output += '<option value="'+categories[i][0]+'">'+ categories[i][1] +'</option>'
     }
@@ -265,6 +265,18 @@ function searchMusic() {
 // Insert Music
 function insertMusic() {
     if (confirm("Confirm insert music?")) {
+        // selectors
+        let catNo = $('#catalogueNoID').val();
+        let title = $('#titleID').val();
+        let composer = $('#composerID').val();
+        let arranger = $('#arrangerID').val();
+        let publisher = $('#publisherID').val();
+        let featInstru = $('#featID').val();
+        let ensemble = $('#ensembleID').val();
+        let parts = $('#partsID').val();
+        let remarks = $('#remarksID').val();
+        let outputJSON = {#####}
+
         $.ajax({
             url: 'http://elitelib22.pythonanywhere.com/newmusic/',
             type: 'POST',
@@ -300,7 +312,7 @@ function deleteMusicByCatNo() {
     }
 }
 
-// about
+// about lol
 function showAbout() {
   $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
                             '<div class="card-body">' +
