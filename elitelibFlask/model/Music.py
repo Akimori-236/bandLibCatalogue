@@ -1,3 +1,6 @@
+from dataclasses import asdict
+
+from requests import NullHandler
 from model.DatabasePool import DatabasePool
 import pandas as pd
 
@@ -175,7 +178,10 @@ class Music:
             catalogueNoList = cursor.fetchall()
             boxList = []
             for num in catalogueNoList:
-                boxList.append(num[0][3:])
+                if catNo==10 or catNo==11:
+                    boxList.append(num[0][3:-1])
+                else:
+                    boxList.append(num[0][3:])
             return boxList
         finally:
             dbConn.close()
