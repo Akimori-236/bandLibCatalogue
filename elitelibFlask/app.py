@@ -265,11 +265,11 @@ def restoreDB():
         return {},500
 
 
-# available boxes in given category
-@app.route('/emptyboxes/<catNo>')
+# GET boxes in given category
+@app.route('/boxes/<catNo>')
 def getEmptyBoxes(catNo):
     try:
-        boxList = Music.getEmptyBoxes(catNo)
+        boxList = Music.getBoxes(catNo)
         output = {"Boxes": boxList}
         return jsonify(output), 200     # OK
     except Exception as err:

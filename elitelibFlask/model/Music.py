@@ -1,6 +1,3 @@
-from dataclasses import asdict
-
-from requests import NullHandler
 from model.DatabasePool import DatabasePool
 import pandas as pd
 
@@ -165,11 +162,11 @@ class Music:
         finally:
             dbConn.close()
             print("Connection released.")
-            
-    
-    # GET Empty Boxes
+
+
+    # GET Boxes
     @classmethod
-    def getEmptyBoxes(cls, catNo):
+    def getBoxes(cls, catNo):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
@@ -178,10 +175,7 @@ class Music:
             catalogueNoList = cursor.fetchall()
             boxList = []
             for num in catalogueNoList:
-                if catNo==10 or catNo==11:
-                    boxList.append(num[0][3:-1])
-                else:
-                    boxList.append(num[0][3:])
+                boxList.append(num[0][3:])
             return boxList
         finally:
             dbConn.close()

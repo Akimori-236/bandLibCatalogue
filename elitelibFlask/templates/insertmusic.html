@@ -2,44 +2,13 @@
 {% include 'adminbar.html' %}
 
 {% block  content %}
+<script type="text/javascript" src="../static/admin.js"></script>
 <script>
     $(function() {
         populateEnsembleList();
         populateCategoryList();
         console.log('Page Loaded.');
     })
-    function populateAvailableBoxes() {
-        var output = '<option selected disabled hidden>             </option>';
-        let categoryID = $('#categoryList').val();
-        $('#catalogueNoID').html(String(categoryID));
-        if (categoryID==10 || categoryID==11) {
-            $("#itemID").prop('disabled', false);
-        } else {
-            $("#itemID").prop('disabled', true);
-        }
-        $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/emptyboxes/' + String(categoryID),
-            type: 'GET',
-            dataType: 'json',
-            success: function(result) {     // maybe save result to prevent multiple requests
-                window.boxes = result.Boxes;
-                //use first 4 digits if longer than 4
-                for (let i=0, b=result.Boxes; i < b.length; i++) {
-                    output += '<option value="'+ b[i] +'">'+ b[i] +'</option>';
-                }
-                $('#boxList').html(output);
-                console.log(window.boxes);
-            },
-            error: showErrorMsg,
-        });
-        return false;
-    }
-    function selectBox() {
-        // make list of items
-        for (let i=0, b=window.boxes; i < b.length; i++) {
-            // output += '<option value="'+ result.Boxes[i] +'">'+ result.Boxes[i] +'</option>';
-        }
-    }
 </script>
 
 
@@ -47,29 +16,40 @@
 <div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
     <form  class="" id="searchID" action="#" onsubmit="return insertMusic();">
         <h2 class='text-light mb-3 text-center'>Insert New Music</h2>
-        <div class="form-group row g-3 align-items-center mb-3 mx-3">
+        <div class="form-group row g-3 align-items-center mb-0 mx-3">
             <div class="form-floating col-4">
-                <select class="form-select" id="categoryList" onchange="populateAvailableBoxes()" required>
+                <select class="form-select" id="categoryList" onchange="categorySelected();" required>
                     <!-- Options populated on load -->
                 </select>
                 <label for="categoryList" class="form-label">Category</label>
             </div>
             <div class="form-floating col-4">
-                <select class="form-select" id="boxList" onchange="selectBox()" required>
+                <select class="form-select" id="boxList" onchange="boxSelected();" required disabled>
                     <!-- Options populated on change of category -->
                 </select>
                 <label for="boxList" class="form-label">Available Boxes</label>
             </div>
             <div class="form-floating col-4">
-                <select class="form-select" id="itemID">
+                <select class="form-select" id="itemList" onchange="itemSelected();" required disabled>
                     <!-- Options populated on load -->
                 </select>
                 <label for="itemID" class="form-label">Item No.</label>
             </div>
         </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
+            <!--Toggle if inserting into existing occupied box-->
+            <div class="col-lg-4 form-check form-switch mb-0 mx-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="existingBoxID" onchange="toggleExistingOrOversized();" disabled>
+                <label class="form-check-label text-light" for="flexSwitchCheckDefault">Insert Into Existing Box</label>
+            </div>
+            <div class="col-lg-4 form-check form-switch mb-0 mx-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="oversizedBoxID" onchange="toggleExistingOrOversized();" disabled>
+                <label class="form-check-label text-light" for="flexSwitchCheckDefault">Oversized Box</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="bg-dark">
-                <span class="text-danger">Catalogue Number: </span>
+                <span class="text-danger">Assigned Catalogue Number : </span>
                 <strong><span class="text-danger" id="catalogueNoID"></span></strong>
             </div>
         </div>
