@@ -79,7 +79,6 @@ def getAllMusic():
 def getMusicByCatID(catID):
     try:
         jsonMusic = Music.getMusicByCatID(catID)
-        print(catID)
         if len(jsonMusic)>0:
             output = {"Music": jsonMusic}
             return jsonify(output), 200     # OK

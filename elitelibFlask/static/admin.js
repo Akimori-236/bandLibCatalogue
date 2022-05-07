@@ -176,7 +176,7 @@ function toggleExistingOrOversized() {
 
 // Insert Music
 function insertMusic() {
-    let input = {
+    let insertMusic = {
         'catalogueNo'   : (window.selectedCat + "-" + window.boxDisplayText + "-" + window.itemDisplayText),
         'categoryID'    : window.selectedCat,
         'title'         : $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim(),
@@ -193,34 +193,28 @@ function insertMusic() {
             url: 'http://elitelib22.pythonanywhere.com/newmusic',
             type: 'POST',
             dataType: 'json',
-            data: input,
-            success: showSuccessMsg(input['title']),
-            error: showErrorMsg(input['title']),
+            data: insertMusic,
+            success: function() {
+                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully inserted '" + $('#titleID').val() + "'.</p>");
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+                console.log("Successful insertion of '" + $('#titleID').val() + "'.");
+                $("#insertMusicFormID")[0].reset();
+            },
+            error: function() {
+                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + $('#titleID').val() + "'.</p>");
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+                console.log("Error inserting '" + $('#titleID').val() + "'.");
+            },
         });
     } else {
-        showCancelMsg(input['title']);
+        $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled insertion of '" + $('#titleID').val() + "'.</p>");
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+        console.log("Cancelled insertion of '" + title + "'.");
     }
     return false;
 }
 
-function showErrorMsg(title) {
-    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + title + "'.</p>");
-    $('html, body').animate({ scrollTop: 0 }, 'fast');
-    console.log("Error inserting '" + $('#titleID').val() + "'.");
-}
 
-function showSuccessMsg(title) {
-    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully inserted '" + title + "'.</p>");
-    $("#insertMusicFormID")[0].reset();
-    $('html, body').animate({ scrollTop: 0 }, 'fast');
-    console.log("Successful insertion of '" + $('#titleID').val() + "'.");
-}
-
-function showCancelMsg(title) {
-    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled insertion of '" + $('#titleID').val() + "'.</p>");
-    $('html, body').animate({ scrollTop: 0 }, 'fast');
-    console.log("Cancelled insertion of '" + $('#titleID').val() + "'.");
-}
 
 
 
