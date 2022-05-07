@@ -187,7 +187,7 @@ function insertMusic() {
         'ensembleID'    : $("#ensembleList").val(),
         'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
         'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
-    } // if "" then send NULL
+    }
     if (confirm("Confirm insert '"+ $('#titleID').val() +"'?")) {
         $.ajax({
             url: 'http://elitelib22.pythonanywhere.com/newmusic',
@@ -199,8 +199,8 @@ function insertMusic() {
         });
     } else {
         showCancelMsg(input['title']);
-        return false;
     }
+    return false;
 }
 
 function showErrorMsg(title) {
@@ -241,4 +241,5 @@ function deleteMusicByCatNo() {
     } else {
         console.log("Cancelled deletion of " + window.title);
     }
+    return false;
 }
