@@ -1,5 +1,4 @@
 function categorySelected() {
-    // empty box and item selectors if category changed?
     // build category part of catalogueNo
     window.selectedCat = $("#categoryList").val();
     $("#catalogueNoID").html(selectedCat);
@@ -14,6 +13,8 @@ function categorySelected() {
         $("#itemID").prop("disabled", true);
         $("#oversizedBoxID").prop('checked',false);
         $("#oversizedBoxID").prop("disabled", true);
+        $("#itemList").html("<option selected disabled hidden>             </option>");
+        $("#itemList").prop("disabled", true);
     }
     console.log("Selected Category: " + selectedCat);
     // GET current boxes
@@ -32,9 +33,10 @@ function categorySelected() {
 
 function populateAvailableBoxes(result) {
     window.boxItems = result.Boxes; // save result to prevent multiple requests
-    window.boxes = [];
-    window.oversized = [];
-    for (let i = 0, b = window.boxItems; i < b.length; i++) {
+    window.boxes = []; // current normal boxes
+    window.oversized = []; // current oversized boxes
+
+    for (let i=0, b=window.boxItems; i < b.length; i++) {
         let x = b[i].slice(0, 4);
         if (isNaN(x)) {
             if (!(x in oversized)) {
@@ -50,8 +52,10 @@ function populateAvailableBoxes(result) {
 }
 
 function boxSelected() {
-    // unlock the other inputs
-    $("#itemList").prop("disabled", false);
+    // ENABLE ITEM SELECT IF WIND BAND CATEGORY
+    if (window.selectedCat == 10 || window.selectedCat == 11) {
+        $("#itemList").prop("disabled", false);
+    }
     var selectedBox = $("#boxList").val();
     window.boxDisplayText = "";
     // FORMAT BOX VALUE
@@ -73,25 +77,22 @@ function boxSelected() {
     $("#catalogueNoID").html(window.selectedCat + "-" + boxDisplayText);
 
     var output = "<option selected disabled hidden>             </option>";
-    if (
-        (window.selectedCat == 10 || window.selectedCat == 11) && !$("#existingBoxID").is(":checked")) {
-        // ITEM 1 IF USING NEW BOX IN WIND BAND CATEGORY
-        output += "<option value='1'> 1 </option>"
+    if ($("#existingBoxID").is(":checked")) {
+        // if selectedBox + 02 in boxes, option value 3
+        for (let i=1, counter = 0; counter < 1; i++) {
+            let boxItemNo = window.boxDisplayText + "-0" + i;
+            if (!(window.boxItems.includes(boxItemNo))) {
+                output += "<option value='"+ i + "'> "+ i +" </option>"
+                counter += 1;
+            }
+        }
+    } else {
+        if (window.selectedCat == 10 || window.selectedCat == 11) {
+            // ITEM 1 IF USING NEW BOX IN WIND BAND CATEGORY
+            output += "<option value='1'> 1 </option>"
+        }
     }
-    // make list of items
-    var items = [];
-    for (let i=0; l=window.boxItems.length; i < l; i++) {
-    //     if (isNaN(window.boxNo)) {
-    //         if (boxItems[i].includes(window.boxNo)) {
 
-    //         }
-    //     } else {
-
-    //     }
-    }
-    // for (let i=0, t=items; i < t.length; i++) {
-    // output += '<option value="'+ result.Boxes[i] +'">'+ result.Boxes[i] +'</option>';
-    // }
     console.log("Selected Box: " + selectedBox);
     $("#itemList").html(output);
 }
@@ -108,7 +109,7 @@ function itemSelected() {
     // DISPLAY CATALOGUE NO OF SELECTED BOX
     console.log("Selected Item: " + selectedItem);
     $("#catalogueNoID").html(
-        window.selectedCat + "-" + boxDisplayText + "-" + itemDisplayText
+        window.selectedCat + "-" + window.boxDisplayText + "-" + window.itemDisplayText
     );
 }
 
@@ -171,4 +172,73 @@ function toggleExistingOrOversized() {
         }
     }
     $("#boxList").html(output);
+}
+
+// Insert Music
+function insertMusic() {
+    let input = {
+        'catalogueNo'   : (window.selectedCat + "-" + window.boxDisplayText + "-" + window.itemDisplayText),
+        'categoryID'    : window.selectedCat,
+        'title'         : $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'composer'      : $("#composerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'ensembleID'    : $("#ensembleList").val(),
+        'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+        'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
+    } // if "" then send NULL
+    if (confirm("Confirm insert '"+ $('#titleID').val() +"'?")) {
+        $.ajax({
+            url: 'http://elitelib22.pythonanywhere.com/newmusic',
+            type: 'POST',
+            dataType: 'json',
+            data: input,
+            success: showSuccessMsg(input['title']),
+            error: showErrorMsg(input['title']),
+        });
+    } else {
+        showCancelMsg(input['title']);
+        return false;
+    }
+}
+
+function showErrorMsg(title) {
+    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + title + "'.</p>");
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+    console.log("Error inserting '" + $('#titleID').val() + "'.");
+}
+
+function showSuccessMsg(title) {
+    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully inserted '" + title + "'.</p>");
+    $("#insertMusicFormID")[0].reset();
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+    console.log("Successful insertion of '" + $('#titleID').val() + "'.");
+}
+
+function showCancelMsg(title) {
+    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled insertion of '" + $('#titleID').val() + "'.</p>");
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+    console.log("Cancelled insertion of '" + $('#titleID').val() + "'.");
+}
+
+
+
+// Delete music
+function deleteMusicByCatNo() {
+    if (confirm("Confirm delete " + window.title + "?")) {
+        var catNo = $('#catalogueNoID').val();
+
+        $.ajax({
+            url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function() {
+                $('#msgbox').html('<p class="btn btn-outline-success">JS: Successfully deleted ' + window.title + '</p>')
+            },
+            error: showErrorMsg,
+        });
+    } else {
+        console.log("Cancelled deletion of " + window.title);
+    }
 }

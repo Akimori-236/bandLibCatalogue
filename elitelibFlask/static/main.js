@@ -1,3 +1,8 @@
+function capitalise(str) {
+    let cap1st = str.charAt(0).toUpperCase() + str.slice(1);
+    return cap1st;
+}
+
 // ENSEMBLE TYPES
 const ensembleList = [
     "Concert Band",
@@ -193,33 +198,33 @@ function successDisplayTable(result) {
             let catalogueNo = result.Music[index][1];
             let catID = result.Music[index][2];
             let title = result.Music[index][3];
-            let composer = '-';
-            if (typeof result.Music[index][4]  != 'object') {
-                composer = result.Music[index][4]
+            let composer = result.Music[index][4];
+            if (typeof composer  == 'object' || composer  == '') {
+                composer = '-';
             }
-            let arranger = '-';
-            if (typeof result.Music[index][5] != 'object') {
-                arranger = result.Music[index][5]
+            let arranger = result.Music[index][5];
+            if (typeof arranger == 'object' || arranger  == '') {
+                arranger = '-';
             }
-            let publisher = '-';
-            if (typeof result.Music[index][6] != 'object') {
-                publisher = result.Music[index][6]
+            let publisher = result.Music[index][6];
+            if (typeof publisher == 'object' || publisher == '') {
+                publisher = '-';
             }
-            let featInstru = '-';
-            if (typeof result.Music[index][7] != 'object') {
-                featInstru = result.Music[index][7]
+            let featInstru = result.Music[index][7];
+            if (typeof featInstru == 'object' || featInstru == '') {
+                featInstru = '-';
             }
             let ensemble = ensembleList[Number(result.Music[index][8]) - 1];
-            if (typeof ensemble == 'undefined') {
+            if (typeof ensemble == 'undefined' || typeof ensemble == 'object' || ensemble == '') {
                 ensemble = '-'
             }
-            let parts = '-';
-            if (typeof result.Music[index][9] != 'object') {
-                parts = result.Music[index][9]
+            let parts = result.Music[index][9];
+            if (typeof parts == 'object' || parts == '') {
+                parts = '-';
             }
-            let remarks = '-';
-            if (typeof result.Music[index][10] != 'object') {
-                remarks = result.Music[index][10]
+            let remarks = result.Music[index][10];
+            if (typeof remarks == 'object' || remarks == '') {
+                remarks = '-';
             }
 
             strHTMLcontent += "<tr>"+
@@ -262,62 +267,13 @@ function searchMusic() {
 }
 
 
-// Insert Music
-function insertMusic() {
-    if (confirm("Confirm insert music?")) {
-        // selectors
-        let catNo = $('#catalogueNoID').val();
-        let title = $('#titleID').val();
-        let composer = $('#composerID').val();
-        let arranger = $('#arrangerID').val();
-        let publisher = $('#publisherID').val();
-        let featInstru = $('#featID').val();
-        let ensemble = $('#ensembleID').val();
-        let parts = $('#partsID').val();
-        let remarks = $('#remarksID').val();
-        let outputJSON = {#####}
-
-        $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/newmusic/',
-            type: 'POST',
-            dataType: 'json',
-            success: function (result) {
-                $('#msgbox').html('Music inserted successfully: ' + result)
-            },
-            error: showErrorMsg,
-        });
-    } else {
-        console.log("Cancelled insertion of music");
-    }
-}
-
-
-
-// Delete music
-function deleteMusicByCatNo() {
-    if (confirm("Confirm delete " + window.title + "?")) {
-        var catNo = $('#catalogueNoID').val();
-
-        $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
-            type: 'DELETE',
-            dataType: 'json',
-            success: function() {
-                $('#msgbox').html('<p class="btn btn-outline-success">JS: Successfully deleted ' + window.title + '</p>')
-            },
-            error: showErrorMsg,
-        });
-    } else {
-        console.log("Cancelled deletion of " + window.title);
-    }
-}
 
 // about lol
 function showAbout() {
   $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
                             '<div class="card-body">' +
                             '<h5 class="card-title text-light text-center mb-3">About</h5>' +
-                            '<p class="card-text text-light my-0"> Version 1 made by ME1-2 Ng Wee Seng in April 2022 </p>' +
+                            '<p class="card-text text-light my-0"> Created by ME1-2 Ng Wee Seng in April-May 2022 </p>' +
                             '<br><br>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">Band Digitalization Team 2022</h6>' +
                             '<p class="card-text text-light my-0"> ME2-2 Joe Tan </p>' +
@@ -334,7 +290,7 @@ function showAbout() {
 function showErrorMsg(xhr, status, strErr) {
   $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
                             '<div class="card-body">' +
-                            '<h5 class="card-title text-light text-center">'+ status +'</h5>' +
+                            '<h5 class="card-title text-light text-center">'+ capitalise(status) +'</h5>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">' + strErr + '</h6>' +
                             '<p class="card-text text-light text-center">Sorry ah, cannot find.</p>' +
                             '</div>' +

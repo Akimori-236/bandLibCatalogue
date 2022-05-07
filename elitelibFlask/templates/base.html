@@ -32,23 +32,10 @@
 
 
 
-    <body>
+    <body class="bg-dark">
         <div class="container-fluid">
             <div class="row">
-                <!--flask-flash message box-->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div class="mb-1"></div>
-                        {% for category, msg in messages %}
-                                <p class="mb-1 {{category}}">{{ msg }}</p>
-                        {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
 
-                <!--message box-->
-                <div id="msgBox">
-                </div>
 
                 {% block content %}
                 <!-- content from other templates -->

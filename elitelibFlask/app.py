@@ -6,6 +6,7 @@ from model.User import User
 # from Validation.Validator import *
 
 app = Flask(__name__)
+app.config.from_pyfile('config/Settings.py')
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -223,11 +224,11 @@ def deleteMusicByCatNo(catNo):
 
 
 
-# INSERT new music [not tested]
+# INSERT new music
 @app.route('/newmusic', methods=['POST'])
 def insertMusic():
     try:
-        jsonMusic = request.json
+        jsonMusic = request.form
         rows = Music.insertMusic(jsonMusic)
         if rows > 0:
             flash("Music inserted successfully", "info")

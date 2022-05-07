@@ -11,7 +11,9 @@
     })
 </script>
 
-
+<div class="bg-dark" id="msgbox">
+    <!--message box-->
+</div>
 
 <div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
     <form  class="" id="searchID" action="#" onsubmit="return insertMusic();">
@@ -40,11 +42,11 @@
             <!--Toggle if inserting into existing occupied box-->
             <div class="col-lg-4 form-check form-switch mb-0 mx-3">
                 <input class="form-check-input" type="checkbox" role="switch" id="existingBoxID" onchange="toggleExistingOrOversized();" disabled>
-                <label class="form-check-label text-light" for="flexSwitchCheckDefault">Insert Into Existing Box</label>
+                <label class="form-check-label text-light" for="existingBoxID">Insert Into Existing Box</label>
             </div>
             <div class="col-lg-4 form-check form-switch mb-0 mx-3">
                 <input class="form-check-input" type="checkbox" role="switch" id="oversizedBoxID" onchange="toggleExistingOrOversized();" disabled>
-                <label class="form-check-label text-light" for="flexSwitchCheckDefault">Oversized Box</label>
+                <label class="form-check-label text-light" for="oversizedBoxID">Oversized Box</label>
             </div>
         </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
