@@ -188,7 +188,7 @@ function insertMusic() {
             'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-            'ensembleType'    : $("#ensembleList").val().toUpperCase(),
+            'ensembleType'    : $("#ensembleID").val(),
             'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
         }
