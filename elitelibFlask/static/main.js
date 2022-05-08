@@ -14,12 +14,12 @@ const ensembleList = [
     "Reference",
     "Others"
 ];
-function populateEnsembleList() {
+function populateEnsembleList(ID) {
     var output = '<option selected disabled hidden>         </option>'
     for (let i=0; i < ensembleList.length; i++) {
-        output += '<option value="'+(i+1)+'">'+ ensembleList[i] +'</option>'
+        output += '<option value="'+ ensembleList[i].toUpperCase() +'">'+ ensembleList[i] +'</option>'
     }
-    $('#ensembleList').html(output)
+    $(ID).html(output)
 }
 
 // Categories
@@ -64,12 +64,12 @@ const categories = [['00', 'Non-Published'],
                     ['93', 'Wind Band Training Disc'],
                     ['94', 'Marching Band Disc']
 ];
-function populateCategoryList() {
+function populateCategoryList(ID) {
     var output = '<option selected disabled hidden>             </option>'
     for (let i=0; i < categories.length; i++) {
         output += '<option value="'+categories[i][0]+'">'+ categories[i][1] +'</option>'
     }
-    $('#categoryList').html(output)
+    $(ID).html(output)
 }
 
 // DELETE BUTTON
@@ -135,16 +135,16 @@ function getMusicByEnsembleType(ensemble) {
     return false;
 }
 
-
+//GET MUSIC BY CATALOGUE NUMBER
 function getMusicByCatNo() {
     //selectors
-    var catNo = $('#catalogueNoID').val();
+    window.catNo = $('#catalogueNoID').val();
     var title = $('#titleID');
     var composer = $('#composerID');
     var arranger = $('#arrangerID');
     var publisher = $('#publisherID');
     var featInstru = $('#featID');
-    var ensemble = $('#ensembleID');
+    var ensembleType = $('#ensembleTypeID');
     var parts = $('#partsID');
     var remarks = $('#remarksID');
 
@@ -159,12 +159,24 @@ function getMusicByCatNo() {
             arranger.val(result.Music[5]);
             publisher.val(result.Music[6]);
             featInstru.val(result.Music[7]);
-            ensemble.val(ensembleList[result.Music[8]-1]);
+            ensembleType.val(result.Music[8]);
             parts.val(result.Music[9]);
             remarks.val(result.Music[10]);
             window.title = title.val();
+            $('#msgbox').html("");
         },
-        error: showErrorMsg,
+        error: function() {
+            console.log("Error retrieving music by Catalogue Number.");
+            title.val("Error");
+            composer.val("Error");
+            arranger.val("Error");
+            publisher.val("Error");
+            featInstru.val("Error");
+            ensembleType.val("Error");
+            parts.val("Error");
+            remarks.val("Error");
+            $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Please double-check the catalogue number.</p>");
+        },
     });
     return false;
 }
@@ -214,9 +226,9 @@ function successDisplayTable(result) {
             if (typeof featInstru == 'object' || featInstru == '') {
                 featInstru = '-';
             }
-            let ensemble = ensembleList[Number(result.Music[index][8]) - 1];
-            if (typeof ensemble == 'undefined' || typeof ensemble == 'object' || ensemble == '') {
-                ensemble = '-'
+            let ensembleType = result.Music[index][8];
+            if (typeof ensembleType == 'object' || ensembleType == '') {
+                ensembleType = '-'
             }
             let parts = result.Music[index][9];
             if (typeof parts == 'object' || parts == '') {
@@ -235,7 +247,7 @@ function successDisplayTable(result) {
             "<td>" + arranger + "</td>" +
             "<td>" + publisher + "</td>" +
             "<td>" + featInstru + "</td>" +
-            "<td>" + ensemble + "</td>" +
+            "<td>" + ensembleType + "</td>" +
             "<td>" + parts + "</td>" +
             "<td>" + remarks + "</td>";
         }

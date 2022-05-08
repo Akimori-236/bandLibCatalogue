@@ -176,44 +176,94 @@ function toggleExistingOrOversized() {
 
 // Insert Music
 function insertMusic() {
-    let insertMusic = {
-        'catalogueNo'   : (window.selectedCat + "-" + window.boxDisplayText + "-" + window.itemDisplayText),
-        'categoryID'    : window.selectedCat,
-        'title'         : $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'composer'      : $("#composerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'ensembleID'    : $("#ensembleList").val(),
-        'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-        'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
-    }
-    if (confirm("Confirm insert '"+ $('#titleID').val() +"'?")) {
-        $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/newmusic',
-            type: 'POST',
-            dataType: 'json',
-            data: insertMusic,
-            success: function() {
-                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully inserted '" + $('#titleID').val() + "'.</p>");
-                $('html, body').animate({ scrollTop: 0 }, 'fast');
-                console.log("Successful insertion of '" + $('#titleID').val() + "'.");
-                $("#insertMusicFormID")[0].reset();
-            },
-            error: function() {
-                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + $('#titleID').val() + "'.</p>");
-                $('html, body').animate({ scrollTop: 0 }, 'fast');
-                console.log("Error inserting '" + $('#titleID').val() + "'.");
-            },
-        });
+    if ($("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim() == "") {
+        $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Please do not mess with the source code.</p>");
     } else {
-        $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled insertion of '" + $('#titleID').val() + "'.</p>");
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
-        console.log("Cancelled insertion of '" + title + "'.");
+        $('#msgbox').html("");
+        let insertMusic = {
+            'catalogueNo'   : (window.selectedCat + "-" + window.boxDisplayText + "-" + window.itemDisplayText),
+            'categoryID'    : window.selectedCat,
+            'title'         : $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'composer'      : $("#composerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'ensembleType'    : $("#ensembleList").val().toUpperCase(),
+            'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
+        }
+        if (confirm("Confirm insert '"+ $('#titleID').val() +"'?")) {
+            $.ajax({
+                url: 'http://elitelib22.pythonanywhere.com/newmusic',
+                type: 'POST',
+                dataType: 'json',
+                data: insertMusic,
+                success: function() {
+                    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully inserted '" + $('#titleID').val() + "'.</p>");
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    console.log("Successful insertion of '" + $('#titleID').val() + "'.");
+                    $("#insertMusicFormID")[0].reset();
+                },
+                error: function() {
+                    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + $('#titleID').val() + "'.</p>");
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    console.log("Error inserting '" + $('#titleID').val() + "'.");
+                },
+            });
+        } else {
+            $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled insertion of '" + $('#titleID').val() + "'.</p>");
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            console.log("Cancelled insertion of '" + $('#titleID').val() + "'.");
+        }
     }
     return false;
 }
 
+
+// edit music
+function editMusicByCatNo() {
+    if ($("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim() == "") {
+        $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Please do not mess with the source code.</p>");
+    } else {
+        $('#msgbox').html("");
+        let editMusic = {
+            'catalogueNo'   : catNo,
+            'categoryID'    : catNo.slice(0, 2),
+            'title'         : $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'composer'      : $("#composerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'ensembleType'    : $("#ensembleList").val().toUpperCase(),
+            'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
+            'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
+        }
+        if (confirm("Confirm edit '"+ window.title +"'?")) {
+            $.ajax({
+                url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
+                type: 'PUT',
+                dataType: 'json',
+                data: editMusic,
+                success: function() {
+                    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully edited '" + window.title + "'.</p>");
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    console.log("Successful edit of '" + window.title + "'.");
+                    $("#editMusicFormID")[0].reset();
+                },
+                error: function() {
+                    $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error editing '" + window.title + "'.</p>");
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    console.log("Error editing '" + window.title + "'.");
+                },
+            });
+        } else {
+            $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled edit of '" + window.title + "'.</p>");
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            console.log("Cancelled edit of '" + window.title + "'.");
+        }
+    return false;
+    }
+}
 
 
 
@@ -228,12 +278,21 @@ function deleteMusicByCatNo() {
             type: 'DELETE',
             dataType: 'json',
             success: function() {
-                $('#msgbox').html('<p class="btn btn-outline-success">JS: Successfully deleted ' + window.title + '</p>')
+                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully deleted '" + window.title + "'.</p>");
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+                console.log("Successful insertion of '" + window.title + "'.");
+                $("#deleteMusicFormID")[0].reset();
             },
-            error: showErrorMsg,
+            error: function() {
+                $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error deleting '" + window.title + "'.</p>");
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+                console.log("Error deleting '" + window.title + "'.");
+            },
         });
     } else {
-        console.log("Cancelled deletion of " + window.title);
+        $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-dark bg-info '>Cancelled deletion of '" + window.title + "'.</p>");
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+        console.log("Cancelled insertion of '" + window.title + "'.");
     }
     return false;
 }

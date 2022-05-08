@@ -4,7 +4,35 @@ import pandas as pd
 ensembleList = ["Concert Band", "Marching Band", "Solo", "Ensemble", "Big Band", "Study", "Reference", "Others"]
 
 class Music:
+    #CREATE
+    # INSERT new music
+    @classmethod
+    def insertMusic(cls, jsonMusic):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (
+                jsonMusic['catalogueNo'],
+                jsonMusic['categoryID'],
+                jsonMusic['title'],
+                jsonMusic['composer'],
+                jsonMusic['arranger'],
+                jsonMusic['publisher'],
+                jsonMusic['featuredInstrument'],
+                jsonMusic['ensembleType'],
+                jsonMusic['parts'],
+                jsonMusic['remarks']
+                ))
+            dbConn.commit()
+            rows = cursor.rowcount
+            return rows
+        finally:
+            dbConn.close()
+            print("Connection released.")
 
+    ##################################################
+    # READ
     # GET all Music
     @classmethod
     def getAllMusic(cls):
@@ -41,7 +69,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music WHERE ensembleID=%s ORDER BY catalogueNo'
+            sql = 'SELECT * FROM music WHERE ensembleType=%s ORDER BY catalogueNo'
             cursor.execute(sql, (ensemble,))
             music = cursor.fetchall()
             return music
@@ -136,34 +164,6 @@ class Music:
             dbConn.close()
             print('Connection released')
 
-
-    # INSERT new music
-    @classmethod
-    def insertMusic(cls, jsonMusic):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleID`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (
-                jsonMusic['catalogueNo'],
-                jsonMusic['categoryID'],
-                jsonMusic['title'],
-                jsonMusic['composer'],
-                jsonMusic['arranger'],
-                jsonMusic['publisher'],
-                jsonMusic['featuredInstrument'],
-                jsonMusic['ensembleID'],
-                jsonMusic['parts'],
-                jsonMusic['remarks']
-                ))
-            dbConn.commit()
-            rows = cursor.rowcount
-            return rows
-        finally:
-            dbConn.close()
-            print("Connection released.")
-
-
     # GET Boxes
     @classmethod
     def getBoxes(cls, catNo):
@@ -181,14 +181,41 @@ class Music:
             dbConn.close()
             print('Connection released')
 
+    ##################################################
+    # UPDATE
+    # EDIT music by CatNo
+    @classmethod
+    def editMusicByCatNo(cls, catNo, jsonMusic):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "UPDATE `music` SET `title` = %s, `composer` = %s, `arranger` = %s, `publisher` = %s, `featuredInstrument` = %s, `ensembleType` = %s, `parts` = %s, `remarks` = %s WHERE (`catalogueNo` = %s);"
+            cursor.execute(sql, (
+                jsonMusic['title'],
+                jsonMusic['composer'],
+                jsonMusic['arranger'],
+                jsonMusic['publisher'],
+                jsonMusic['featuredInstrument'],
+                jsonMusic['ensembleType'],
+                jsonMusic['parts'],
+                jsonMusic['remarks'],
+                catNo
+                ))
+            dbConn.commit()
+            rows=cursor.rowcount
+            return rows
+        finally:
+            dbConn.close()
+            print("Connection released")
 
+    ##################################################
     # DELETE music by CatNo
     @classmethod
     def deleteMusicByCatNo(cls, catNo):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql="DELETE from music WHERE catalogueNo=%s"
+            sql = "DELETE from music WHERE catalogueNo=%s"
             cursor.execute(sql, (catNo,))
             dbConn.commit()
             rows=cursor.rowcount
@@ -198,6 +225,8 @@ class Music:
             print("Connection released")
 
 
+
+    ##################################################
     # Wipe out current table and create new with CSV data
     @classmethod
     def parseCSV(cls, filePath):
@@ -230,8 +259,9 @@ class Music:
                 parts = row['Parts']
                 remarks = row['Remarks']
 
-                sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleID`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleID, parts, remarks)
+                # can we call insertMusic()???
+                sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks)
                 cursor.execute(sql, values)
                 dbConn.commit()
                 rows += 1

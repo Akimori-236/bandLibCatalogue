@@ -5,8 +5,8 @@
 <script type="text/javascript" src="../static/admin.js"></script>
 <script>
     $(function() {
-        populateEnsembleList();
-        populateCategoryList();
+        populateEnsembleList('#ensembleID');
+        populateCategoryList('#categoryList');
         console.log('Page Loaded.');
     })
 </script>
@@ -16,8 +16,9 @@
 </div>
 
 <div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
-    <form  class="" id="searchID" action="#" onsubmit="return insertMusic();">
+    <form  class="" id="insertMusicFormID" action="#" onsubmit="return insertMusic();">
         <h2 class='text-light mb-3 text-center'>Insert New Music</h2>
+        <!--SELECTORS FOR POPULATING CATALOGUE NUMBER-->
         <div class="form-group row g-3 align-items-center mb-0 mx-3">
             <div class="form-floating col-4">
                 <select class="form-select" id="categoryList" onchange="categorySelected();" required>
@@ -38,23 +39,27 @@
                 <label for="itemID" class="form-label">Item No.</label>
             </div>
         </div>
-        <div class="row g-3 align-items-center mb-3 mx-3">
-            <!--Toggle if inserting into existing occupied box-->
+        <!--TOGGLES FOR SELECTORS-->
+        <div class="row g-3 align-items-center m-2">
+            <!--TOGGLE FOR INSERTING INTO OCCUPIED BOX-->
             <div class="col-lg-4 form-check form-switch mb-0 mx-3">
                 <input class="form-check-input" type="checkbox" role="switch" id="existingBoxID" onchange="toggleExistingOrOversized();" disabled>
                 <label class="form-check-label text-light" for="existingBoxID">Insert Into Existing Box</label>
             </div>
+            <!--TOGGLE FOR OVERSIZED BOXES-->
             <div class="col-lg-4 form-check form-switch mb-0 mx-3">
                 <input class="form-check-input" type="checkbox" role="switch" id="oversizedBoxID" onchange="toggleExistingOrOversized();" disabled>
                 <label class="form-check-label text-light" for="oversizedBoxID">Oversized Box</label>
             </div>
         </div>
+        <!--GENERATED CATALOGUE NUMBER-->
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="bg-dark">
                 <span class="text-danger">Assigned Catalogue Number : </span>
                 <strong><span class="text-danger" id="catalogueNoID"></span></strong>
             </div>
         </div>
+        <!--DATA ENTRY-->
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="form-floating">
                 <input type="text" class="form-control" id="titleID" required>
@@ -87,7 +92,7 @@
         </div>
         <div class="row g-3 align-items-center mb-3 mx-3">
             <div class="form-floating">
-                <select class="form-select" id="ensembleList">
+                <select class="form-select" id="ensembleID">
                     <!-- Ooptions populated on load -->
                 </select>
                 <label for="ensembleID">Ensemble Type</label>

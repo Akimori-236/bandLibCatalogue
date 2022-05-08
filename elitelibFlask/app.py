@@ -41,10 +41,15 @@ def uploadCSV():
 def newMusicForm():
     return render_template("insertmusic.html", title="Insert New Music Into Catalogue")
 
-# delete music page
+# form for deleting music
 @app.route('/deletemusic')
-def deleteSelectionPage():
+def deleteMusicForm():
     return render_template("deletemusic.html", title="Condemn Sheet Music")
+
+# form for editing music
+@app.route('/editmusic')
+def editMusicForm():
+    return render_template("editmusic.html", title="Edit Catalogue")
 
 #######################
 # # ERRORS
@@ -60,8 +65,24 @@ def error404(e):
 
 
 
-######################################################
+##################################################
+# CREATE
+# INSERT new music
+@app.route('/newmusic', methods=['POST'])
+def insertMusic():
+    try:
+        jsonMusic = request.form
+        rows = Music.insertMusic(jsonMusic)
+        if rows > 0:
+            flash("Music inserted successfully", "info")
+        output = {"Music Inserted": rows}
+        return jsonify(output), 201     # Successful creation
+    except Exception as err:
+        print(err)
+        return {},500
 
+##################################################
+# READ
 # GET all Music [keep for csv exporting for db backup]
 @app.route('/music')
 def getAllMusic():
@@ -205,8 +226,36 @@ def searchMusicByFeatInstru():
         print(err)
         return {}, 500       # Internal Server Error
 
+# GET boxes in given category
+@app.route('/boxes/<catNo>')
+def getEmptyBoxes(catNo):
+    try:
+        boxList = Music.getBoxes(catNo)
+        output = {"Boxes": boxList}
+        return jsonify(output), 200     # OK
+    except Exception as err:
+        print(err)
+        return {}, 500      # internal server error
 
 
+##################################################
+# UPDATE
+# EDIT EXISTING MUSIC
+@app.route('/music/<catNo>', methods=['PUT'])
+def editMusicByCatNo(catNo):
+    try:
+        jsonMusic = request.form
+        rows = Music.editMusicByCatNo(catNo, jsonMusic)
+        if rows > 0:
+            flash("Music edited successfully", "info")
+        output = {"Music Edited": rows}
+        return jsonify(output), 201     # Successful creation
+    except Exception as err:
+        print(err)
+        return {},500
+
+
+##################################################
 #DELETE music by CatNo
 @app.route('/music/<catNo>', methods=['DELETE'])
 # @requireAdmin
@@ -221,21 +270,6 @@ def deleteMusicByCatNo(catNo):
         print(err)
         return {}, 500
 
-
-
-# INSERT new music
-@app.route('/newmusic', methods=['POST'])
-def insertMusic():
-    try:
-        jsonMusic = request.form
-        rows = Music.insertMusic(jsonMusic)
-        if rows > 0:
-            flash("Music inserted successfully", "info")
-        output = {"Music Inserted": rows}
-        return jsonify(output), 201     # Successful creation
-    except Exception as err:
-        print(err)
-        return {},500
 
 
 ##############################################################
@@ -265,16 +299,7 @@ def restoreDB():
         return {},500
 
 
-# GET boxes in given category
-@app.route('/boxes/<catNo>')
-def getEmptyBoxes(catNo):
-    try:
-        boxList = Music.getBoxes(catNo)
-        output = {"Boxes": boxList}
-        return jsonify(output), 200     # OK
-    except Exception as err:
-        print(err)
-        return {}, 500      # internal server error
+
 
 
 ###########################################
