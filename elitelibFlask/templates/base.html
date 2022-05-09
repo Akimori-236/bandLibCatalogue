@@ -32,20 +32,16 @@
 
 
 
-    <body>
+    <body class="bg-dark">
         <div class="container-fluid">
-            <!--NAV Row-->
-            <div class="mb-3">
-                    {% include 'navbar.html' %}
-            </div>
-            <div class="row mt-3">
-                <div class="">
+            <div class="row">
 
-                    {% block content %}
-                    <!-- content from other templates -->
-                    {% endblock %}
 
-                </div>
+                {% block content %}
+                <!-- content from other templates -->
+                {% endblock %}
+
+
             </div>
         </div>
     </body>

@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
+{% include 'navbar.html' %}
 
 {% block  content %}
 
 <div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">
     <div class="card-body">
-      <h5 class="card-title text-light text-center">Error 404</h5>
-      <h6 class="card-subtitle mb-2 text-muted text-center">Sorry ah, cannot find.</h6>
-      <p class="card-text text-light">Go back, double check your inputs and try again.</p>
-      <a href="javascript:history.back()" class="card-link">BACK</a>
-      <a href="#" class="card-link">Another link</a>
+        <h5 class="card-title text-light text-center">Error 404</h5>
+        <h6 class="card-subtitle mb-2 text-muted text-center">Sorry ah, cannot find.</h6>
+        <br>
+        <p class="card-text text-light">Hello, please double check your inputs and try again.</p>
+        <a href="javascript:history.back()" class="card-link btn btn-danger mt-3 mx-auto d-block">BACK</a>
     </div>
-  </div>
+</div>
 
 {% endblock %}

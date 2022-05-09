@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% include 'adminbar.html' %}
+
+{% block  content %}
+<script type="text/javascript" src="../static/admin.js"></script>
+<script>
+    $(function() {
+        populateEnsembleList('#ensembleID');
+        populateCategoryList('#categoryList');
+        console.log('Page Loaded.');
+    })
+</script>
+
+<div class="bg-dark" id="msgbox">
+    <!--message box-->
+</div>
+
+<div class="col-lg-6 bg-dark mx-auto border border-danger rounded-3">
+    <form  class="" id="insertMusicFormID" action="#" onsubmit="return insertMusic();">
+        <h2 class='text-light mb-3 text-center'>Insert New Music</h2>
+        <!--SELECTORS FOR POPULATING CATALOGUE NUMBER-->
+        <div class="form-group row g-3 align-items-center mb-0 mx-3">
+            <div class="form-floating col-4">
+                <select class="form-select" id="categoryList" onchange="categorySelected();" required>
+                    <!-- Options populated on load -->
+                </select>
+                <label for="categoryList" class="form-label">Category</label>
+            </div>
+            <div class="form-floating col-4">
+                <select class="form-select" id="boxList" onchange="boxSelected();" required disabled>
+                    <!-- Options populated on change of category -->
+                </select>
+                <label for="boxList" class="form-label">Available Boxes</label>
+            </div>
+            <div class="form-floating col-4">
+                <select class="form-select" id="itemList" onchange="itemSelected();" required disabled>
+                    <!-- Options populated on load -->
+                </select>
+                <label for="itemID" class="form-label">Item No.</label>
+            </div>
+        </div>
+        <!--TOGGLES FOR SELECTORS-->
+        <div class="row g-3 align-items-center m-2">
+            <!--TOGGLE FOR INSERTING INTO OCCUPIED BOX-->
+            <div class="col-lg-4 form-check form-switch mb-0 mx-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="existingBoxID" onchange="toggleExistingOrOversized();" disabled>
+                <label class="form-check-label text-light" for="existingBoxID">Insert Into Existing Box</label>
+            </div>
+            <!--TOGGLE FOR OVERSIZED BOXES-->
+            <div class="col-lg-4 form-check form-switch mb-0 mx-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="oversizedBoxID" onchange="toggleExistingOrOversized();" disabled>
+                <label class="form-check-label text-light" for="oversizedBoxID">Oversized Box</label>
+            </div>
+        </div>
+        <!--GENERATED CATALOGUE NUMBER-->
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="bg-dark">
+                <span class="text-danger">Assigned Catalogue Number : </span>
+                <strong><span class="text-danger" id="catalogueNoID"></span></strong>
+            </div>
+        </div>
+        <!--DATA ENTRY-->
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="titleID" required>
+                <label for="titleID" class="form-label">Title</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="composerID">
+                <label for="composerID" class="form-label">Composer</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="arrangerID">
+                <label for="arrangerID" class="form-label">Arranger</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="publisherID">
+                <label for="publisherID" class="form-label">Publisher</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="featID">
+                <label for="featID" class="form-label">Featured Instrument(s)</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <select class="form-select" id="ensembleID">
+                    <!-- Ooptions populated on load -->
+                </select>
+                <label for="ensembleID">Ensemble Type</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="partsID">
+                <label for="partsID" class="form-label">Parts</label>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center mb-3 mx-3">
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave remarks here" id="remarksID"></textarea>
+                <label for="remarksID" class="form-label">Remarks</label>
+            </div>
+        </div>
+
+        <input class="btn btn-danger mx-auto my-3 d-block" type="submit" value="Submit"/>
+    </form>
+</div>
+
+
+{% endblock %}
