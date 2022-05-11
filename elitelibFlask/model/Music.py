@@ -39,7 +39,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music ORDER BY catalogueNo'
+            sql = 'SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks FROM music ORDER BY catalogueNo'
             cursor.execute(sql)
             allMusic = cursor.fetchall()
             return allMusic
@@ -255,13 +255,13 @@ class Music:
                 arranger = row['Arranger']
                 publisher = row['Publisher']
                 featuredInstrument = row['Featured Instrument(s)']
-                ensembleID = ensembleList.index(row['Ensemble Type'])   # convert ensemble into ensembleID
+                ensemble = ensembleList.index(row['Ensemble Type'])   # convert ensemble into ensembleID
                 parts = row['Parts']
                 remarks = row['Remarks']
 
                 # can we call insertMusic()???
                 sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks)
+                values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensemble, parts, remarks)
                 cursor.execute(sql, values)
                 dbConn.commit()
                 rows += 1

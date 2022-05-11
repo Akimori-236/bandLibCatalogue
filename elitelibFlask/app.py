@@ -1,15 +1,63 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, g, redirect, url_for, flash
 import os
-from os.path import join, dirname, realpath
 from model.Music import Music
 from model.User import User
-# from Validation.Validator import *
+from config.Settings import Settings
+import functools
+import jwt
+import re
 
 app = Flask(__name__)
 app.config.from_pyfile('config/Settings.py')
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+##################################################
+# VALIDATOR WRAPPERS
+def requireLogin(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        #BEFORE
+        auth = False
+        output = []
+        auth_header = request.headers.get("Authorization")
+
+        if auth_header:
+            jwtToken = auth_header.split(" ")[1] # Select Token itself
+            print("JWT TOKEN: " + jwtToken)
+        else:
+            jwtToken = None
+
+        if jwtToken: # if there is a JWT Token
+            try:
+                payload = jwt.decode(jwtToken, Settings.SECRET_KEY, algorithms="HS256") #decode Token with Key by Algo
+                auth = True # Decoding was successful
+
+                username = payload['username']
+                userid = payload['userid']
+                g.username = username
+                g.userid = userid
+            except (jwt.InvalidSignatureError, jwt.ExpiredSignatureError) as err:
+                print(err)
+                output.append(err)
+
+        if auth == False:
+            # output = {"Message": "Please log in."}
+            # return jsonify(output), 400
+            output.append("Unauthorized Access: Please log in.")
+            return render_template("index.html", errors=output), 401 # not logged in
+
+
+        value = func(*args, **kwargs)
+        return value
+        #AFTER
+    return wrapper
+##################################################
+
+
 
 # home page
 @app.route('/')
@@ -21,8 +69,7 @@ def sanityCheck():
 
 # ADMIN Tools
 @app.route('/admin')
-# @validateJWTToken
-# @requireAdmin
+@requireLogin
 def admin():
     return render_template("admin.html", title="Librarian Admin Tools")
 
@@ -163,7 +210,7 @@ def getMusicByCatNo(catNo):
 
 
 # SEARCH music by title
-@app.route('/search/title',methods=['GET'])
+@app.route('/search/title')
 def searchMusicByTitle():
     try:
         query = request.args['q']           # use request.form for POST method
@@ -179,7 +226,7 @@ def searchMusicByTitle():
         return {}, 500       # Internal Server Error
 
 # SEARCH music by composer/arranger
-@app.route('/search/comparr',methods=['GET'])
+@app.route('/search/comparr')
 def searchMusicByCompArr():
     try:
         query = request.args['q']           # use request.form for POST method
@@ -195,7 +242,7 @@ def searchMusicByCompArr():
         return {}, 500       # Internal Server Error
 
 # SEARCH music by publisher
-@app.route('/search/publisher',methods=['GET'])
+@app.route('/search/publisher')
 def searchMusicByPublisher():
     try:
         query = request.args['q']           # use request.form for POST method
@@ -211,7 +258,7 @@ def searchMusicByPublisher():
         return {}, 500       # Internal Server Error
 
 # SEARCH music by Featured Instrument
-@app.route('/search/feat',methods=['GET'])
+@app.route('/search/feat')
 def searchMusicByFeatInstru():
     try:
         query = request.args['q']           # use request.form for POST method
@@ -306,21 +353,20 @@ def restoreDB():
 # USERS
 
 # Log in page
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def Login():
-    return render_template("login.html", title="Librarian Login")
+    if request.method == 'GET':
+        return render_template("login.html", title="Librarian Login")
+    elif request.method == 'POST':
+        try:
+            jsonUser = request.form
+            username = jsonUser['username']
+            password = jsonUser['password']
+            jwtToken = User.loginUser(username, password)
+            output = {'JWT' : jwtToken}
+            return jsonify(output), 200
+        except Exception as err:
+            print(err)
+            return {}, 500
 
-# # ISSUE JWTs / LOGIN
-# @app.route('/users/login', methods=['POST']) # POST as token creation
-# def loginUser():
-#     try:
-#         jsonUser = request.json
-#         email = jsonUser['email']
-#         password = jsonUser['password']
-#         jwtToken = User.loginUser(email, password)
-#         output = {"JWT": jwtToken}
-#         return jsonify(output), 200     # Successful creation
-#     except Exception as err:
-#         print(err)
-#         return {},500
-
+###########################################

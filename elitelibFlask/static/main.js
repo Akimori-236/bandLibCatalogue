@@ -95,7 +95,7 @@ function selectCategory() {
     var strHTMLcontent = ""; // insert search result
     console.log("Getting Category:" + String(categoryID));
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/category/' + String(categoryID),
+        url: 'https://elitelib22.pythonanywhere.com/category/' + String(categoryID),
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -113,7 +113,7 @@ function getAllMusic() {
     var strHTMLcontent = ""; // insert search result
 
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/music/',
+        url: 'https://elitelib22.pythonanywhere.com/music/',
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -126,7 +126,7 @@ function getAllMusic() {
 
 function getMusicByEnsembleType(ensemble) {
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/ensemble/' + ensemble,
+        url: 'https://elitelib22.pythonanywhere.com/ensemble/' + ensemble,
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -144,12 +144,12 @@ function getMusicByCatNo() {
     var arranger = $('#arrangerID');
     var publisher = $('#publisherID');
     var featInstru = $('#featID');
-    var ensembleType = $('#ensembleTypeID');
+    var ensembleType = $('#ensembleID');
     var parts = $('#partsID');
     var remarks = $('#remarksID');
 
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/music/catno/' + catNo,
+        url: 'https://elitelib22.pythonanywhere.com/music/catno/' + catNo + '/',
         type: 'GET',
         dataType: 'json',
         success: function(result) {
@@ -269,7 +269,7 @@ function searchMusic() {
     console.log('Searching for: ' + query);
 
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/search/'+ searchType +'?q=' + query,
+        url: 'https://elitelib22.pythonanywhere.com/search/'+ searchType +'?q=' + query,
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,

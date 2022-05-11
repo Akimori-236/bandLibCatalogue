@@ -204,7 +204,7 @@ function insertMusic() {
                     console.log("Successful insertion of '" + $('#titleID').val() + "'.");
                     $("#insertMusicFormID")[0].reset();
                 },
-                error: function() {
+                error: function(request, status, error) {
                     $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error inserting '" + $('#titleID').val() + "'.</p>");
                     $('html, body').animate({ scrollTop: 0 }, 'fast');
                     console.log("Error inserting '" + $('#titleID').val() + "'.");
@@ -234,7 +234,7 @@ function editMusicByCatNo() {
             'arranger'      : $("#arrangerID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'publisher'     : $("#publisherID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'featuredInstrument' : $("#featID").val().toUpperCase().replace(/\s+/g, " ").trim(),
-            'ensembleType'    : $("#ensembleList").val().toUpperCase(),
+            'ensembleType'    : $("#ensembleID").val(),
             'parts'         : $("#partsID").val().toUpperCase().replace(/\s+/g, " ").trim(),
             'remarks'       : $("#remarksID").val().toUpperCase().replace(/\s+/g, " ").trim()
         }
@@ -250,7 +250,7 @@ function editMusicByCatNo() {
                     console.log("Successful edit of '" + window.title + "'.");
                     $("#editMusicFormID")[0].reset();
                 },
-                error: function() {
+                error: function(request, status, error) {
                     $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error editing '" + window.title + "'.</p>");
                     $('html, body').animate({ scrollTop: 0 }, 'fast');
                     console.log("Error editing '" + window.title + "'.");
@@ -283,7 +283,7 @@ function deleteMusicByCatNo() {
                 console.log("Successful insertion of '" + window.title + "'.");
                 $("#deleteMusicFormID")[0].reset();
             },
-            error: function() {
+            error: function(request, status, error) {
                 $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Error deleting '" + window.title + "'.</p>");
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
                 console.log("Error deleting '" + window.title + "'.");
@@ -296,3 +296,32 @@ function deleteMusicByCatNo() {
     }
     return false;
 }
+
+
+
+// LOGIN
+function login() {
+    let loginData = {
+        'username': $("#usernameID").val(),
+        'password': $("#passwordID").val(),
+    }
+
+    $.ajax({
+        url: 'http://elitelib22.pythonanywhere.com/login',
+        type: 'POST',
+        dataType: 'json',
+        data: loginData,
+        success: function(result) {
+            if(result === "no_errors") location.href = "/admin"
+        },
+        error: function(request, status, error) {
+            $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Wrong Username or Password: "+request+"-"+status+"-"+error +"</p>");
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            console.log("Wrong login credentials. " + error);
+        },
+    });
+    return false;
+}
+
+
+
