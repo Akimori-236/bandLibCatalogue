@@ -25,6 +25,7 @@ def requireLogin(func):
         output = []
         auth_header = request.headers.get("Authorization")
 
+        # Check for token
         if auth_header:
             jwtToken = auth_header.split(" ")[1] # Select Token itself
             print("JWT TOKEN: " + jwtToken)
@@ -47,8 +48,8 @@ def requireLogin(func):
         if auth == False:
             # output = {"Message": "Please log in."}
             # return jsonify(output), 400
-            output.append("Unauthorized Access: Please log in.")
-            return render_template("index.html", errors=output), 401 # not logged in
+            output.append("Unauthorized Access: Please log in hor.")
+            return render_template("admin.html", errors=output), 401 # not logged in
 
 
         value = func(*args, **kwargs)
@@ -69,7 +70,6 @@ def sanityCheck():
 
 # ADMIN Tools
 @app.route('/admin')
-@requireLogin
 def admin():
     return render_template("admin.html", title="Librarian Admin Tools")
 
@@ -80,21 +80,25 @@ def about():
 
 # upload csv form
 @app.route('/uploadcsv')
+@requireLogin
 def uploadCSV():
     return render_template("uploadcsv.html", title="Restore Database")
 
 # form for Inserting new music
 @app.route('/newmusic')
+@requireLogin
 def newMusicForm():
     return render_template("insertmusic.html", title="Insert New Music Into Catalogue")
 
 # form for deleting music
 @app.route('/deletemusic')
+@requireLogin
 def deleteMusicForm():
     return render_template("deletemusic.html", title="Condemn Sheet Music")
 
 # form for editing music
 @app.route('/editmusic')
+@requireLogin
 def editMusicForm():
     return render_template("editmusic.html", title="Edit Catalogue")
 
@@ -116,6 +120,7 @@ def error404(e):
 # CREATE
 # INSERT new music
 @app.route('/newmusic', methods=['POST'])
+@requireLogin
 def insertMusic():
     try:
         jsonMusic = request.form
@@ -289,6 +294,7 @@ def getEmptyBoxes(catNo):
 # UPDATE
 # EDIT EXISTING MUSIC
 @app.route('/music/<catNo>', methods=['PUT'])
+@requireLogin
 def editMusicByCatNo(catNo):
     try:
         jsonMusic = request.form
@@ -305,7 +311,7 @@ def editMusicByCatNo(catNo):
 ##################################################
 #DELETE music by CatNo
 @app.route('/music/<catNo>', methods=['DELETE'])
-# @requireAdmin
+@requireLogin
 def deleteMusicByCatNo(catNo):
     try:
         rows = Music.deleteMusicByCatNo(catNo)
@@ -327,6 +333,7 @@ UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 @app.route('/uploadcsv', methods=['POST'])
+@requireLogin
 def restoreDB():
     try:
         # get the uploaded file
