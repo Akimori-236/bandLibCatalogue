@@ -16,7 +16,7 @@ $(document).ready(function () {
         // if (confirm('Confirm insert' + title  + '?')) {
             $.ajax({
                 type: "POST",
-                url: "http://elitelib22.pythonanywhere.com/newmusic/",
+                url: "https://elitelib22.pythonanywhere.com/newmusic/",
                 data: formData,
                 dataType: "json",
                 encode: true,

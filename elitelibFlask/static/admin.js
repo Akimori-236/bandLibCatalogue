@@ -20,7 +20,7 @@ function categorySelected() {
     // GET current boxes
     $.ajax({
         url:
-            "http://elitelib22.pythonanywhere.com/boxes/" + String(selectedCat),
+            "https://elitelib22.pythonanywhere.com/boxes/" + String(selectedCat),
         type: "GET",
         dataType: "json",
         success: populateAvailableBoxes,
@@ -194,7 +194,7 @@ function insertMusic() {
         }
         if (confirm("Confirm insert '"+ $('#titleID').val() +"'?")) {
             $.ajax({
-                url: 'http://elitelib22.pythonanywhere.com/newmusic',
+                url: 'https://elitelib22.pythonanywhere.com/newmusic',
                 type: 'POST',
                 dataType: 'json',
                 data: insertMusic,
@@ -240,7 +240,7 @@ function editMusicByCatNo() {
         }
         if (confirm("Confirm edit '"+ window.title +"'?")) {
             $.ajax({
-                url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
+                url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
                 type: 'PUT',
                 dataType: 'json',
                 data: editMusic,
@@ -274,7 +274,7 @@ function deleteMusicByCatNo() {
         var catNo = $('#catalogueNoID').val();
 
         $.ajax({
-            url: 'http://elitelib22.pythonanywhere.com/music/' + catNo,
+            url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
             type: 'DELETE',
             dataType: 'json',
             success: function() {
@@ -307,7 +307,7 @@ function login() {
     }
 
     $.ajax({
-        url: 'http://elitelib22.pythonanywhere.com/login',
+        url: 'https://elitelib22.pythonanywhere.com/login',
         type: 'POST',
         dataType: 'json',
         data: loginData,
