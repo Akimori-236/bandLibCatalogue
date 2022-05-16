@@ -149,7 +149,7 @@ function getMusicByCatNo() {
     var remarks = $('#remarksID');
 
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/music/catno/' + catNo + '/',
+        url: 'https://elitelib22.pythonanywhere.com/music/catno/' + catNo,
         type: 'GET',
         dataType: 'json',
         success: function(result) {

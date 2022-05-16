@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session, send_file
 from flask_session import Session
+from flask_cors import CORS
 import os
 import datetime
 from model.Music import Music
@@ -10,6 +11,7 @@ app.config.from_pyfile('config/Settings.py')
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+CORS(app)
 
 if __name__ == "__main__":
     app.run(debug=True)
