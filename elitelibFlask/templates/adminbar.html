@@ -1,3 +1,6 @@
+<!-- jQuery CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-4 border border-danger">
     <div class="container-fluid">
 
@@ -23,6 +26,12 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
 
+                <!-- 1st nav link -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-light" aria-current="page" href="/">Home</a>
+                </li>
+
+
 
                 <!-- 2nd nav link -->
                 <li class="nav-item ms-3">
@@ -30,7 +39,7 @@
                 </li>
 
 
-
+                <!--3rd nav link-->
                 <li class="nav-item ms-3">
                     <a class="nav-link text-light" href="/admin"
                         >Admin Tools</a>
@@ -39,8 +48,15 @@
 
 
 
-            <!--log in-->
-            <a href="/login" class="my-auto btn btn-danger">Log In</a>
+            <!--log in/out-->
+            <div id="loginbtn">
+                {% if session.username %}
+                    <a href="/logout" class="my-auto btn btn-primary">Log Out</a>
+                {% else %}
+                    <a href="/login" class="my-auto btn btn-danger">Log In</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>
+

@@ -1,63 +1,18 @@
-from flask import Flask, request, jsonify, render_template, g, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session, send_file
+from flask_session import Session
 import os
+import datetime
 from model.Music import Music
 from model.User import User
-from config.Settings import Settings
-import functools
-import jwt
-import re
 
 app = Flask(__name__)
 app.config.from_pyfile('config/Settings.py')
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-##################################################
-# VALIDATOR WRAPPERS
-def requireLogin(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        #BEFORE
-        auth = False
-        output = []
-        auth_header = request.headers.get("Authorization")
-
-        # Check for token
-        if auth_header:
-            jwtToken = auth_header.split(" ")[1] # Select Token itself
-            print("JWT TOKEN: " + jwtToken)
-        else:
-            jwtToken = None
-
-        if jwtToken: # if there is a JWT Token
-            try:
-                payload = jwt.decode(jwtToken, Settings.SECRET_KEY, algorithms="HS256") #decode Token with Key by Algo
-                auth = True # Decoding was successful
-
-                username = payload['username']
-                userid = payload['userid']
-                g.username = username
-                g.userid = userid
-            except (jwt.InvalidSignatureError, jwt.ExpiredSignatureError) as err:
-                print(err)
-                output.append(err)
-
-        if auth == False:
-            # output = {"Message": "Please log in."}
-            # return jsonify(output), 400
-            output.append("Unauthorized Access: Please log in hor.")
-            return render_template("admin.html", errors=output), 401 # not logged in
-
-
-        value = func(*args, **kwargs)
-        return value
-        #AFTER
-    return wrapper
-##################################################
-
 
 
 # home page
@@ -78,28 +33,37 @@ def admin():
 def about():
     return render_template("about.html", title="Band Digitalization Team 2022", team=["ME2-2 Joe Tan", "ME1-2 Ng Wee Seng", "ME1-2 Vignesh", "ME1-2 Gerald Lim", "ME1-2 Kenneth Low"])
 
+# print format
+@app.route('/print')
+def printFormat():
+    return render_template("print.html", title="Print Search Results")
+
 # upload csv form
 @app.route('/uploadcsv')
-@requireLogin
 def uploadCSV():
+    if not session.get('username'):
+        return redirect('/login')
     return render_template("uploadcsv.html", title="Restore Database")
 
 # form for Inserting new music
 @app.route('/newmusic')
-@requireLogin
 def newMusicForm():
+    if not session.get('username'):
+        return redirect('/login')
     return render_template("insertmusic.html", title="Insert New Music Into Catalogue")
 
 # form for deleting music
 @app.route('/deletemusic')
-@requireLogin
 def deleteMusicForm():
+    if not session.get('username'):
+        return redirect('/login')
     return render_template("deletemusic.html", title="Condemn Sheet Music")
 
 # form for editing music
 @app.route('/editmusic')
-@requireLogin
 def editMusicForm():
+    if not session.get('username'):
+        return redirect('/login')
     return render_template("editmusic.html", title="Edit Catalogue")
 
 #######################
@@ -120,8 +84,9 @@ def error404(e):
 # CREATE
 # INSERT new music
 @app.route('/newmusic', methods=['POST'])
-@requireLogin
 def insertMusic():
+    if not session.get('username'):
+        return redirect('/login')
     try:
         jsonMusic = request.form
         rows = Music.insertMusic(jsonMusic)
@@ -144,8 +109,16 @@ def getAllMusic():
         return jsonify(output), 200     # OK
     except Exception as err:
         print(err)
-        return {}, 500      # internal server error
+        return {}, 500                  # internal server error
 
+@app.route('/printdb')
+def printAllMusic():
+    try:
+        jsonMusic = Music.printAllMusic()
+        return render_template("print.html", data=jsonMusic, title="Print Catalogue")
+    except Exception as err:
+        print(err)
+        return {}, 500                  # internal server error
 
 # # GET music by category
 @app.route('/category/<int:catID>')
@@ -294,8 +267,9 @@ def getEmptyBoxes(catNo):
 # UPDATE
 # EDIT EXISTING MUSIC
 @app.route('/music/<catNo>', methods=['PUT'])
-@requireLogin
 def editMusicByCatNo(catNo):
+    if not session.get('username'):
+        return redirect('/login')
     try:
         jsonMusic = request.form
         rows = Music.editMusicByCatNo(catNo, jsonMusic)
@@ -311,8 +285,9 @@ def editMusicByCatNo(catNo):
 ##################################################
 #DELETE music by CatNo
 @app.route('/music/<catNo>', methods=['DELETE'])
-@requireLogin
 def deleteMusicByCatNo(catNo):
+    if not session.get('username'):
+        return redirect('/login')
     try:
         rows = Music.deleteMusicByCatNo(catNo)
         if rows > 0:
@@ -332,9 +307,10 @@ def deleteMusicByCatNo(catNo):
 UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
-@app.route('/uploadcsv', methods=['POST'])
-@requireLogin
+@app.route('/dbimport', methods=['POST'])
 def restoreDB():
+    if not session.get('username'):
+        return redirect('/login')
     try:
         # get the uploaded file
         uploaded_file = request.files['file']
@@ -352,28 +328,48 @@ def restoreDB():
         print(err)
         return {},500
 
+# EXPORT CSV FILE
+@app.route('/dbexport')
+def dbexport():
+    if not session.get('username'):
+        return redirect('/login')
+    todayDate = datetime.datetime.now()
+    todayDate = todayDate.strftime("%d%m%y")
+    filename = "LibCatalog" + todayDate + ".csv"
+    try:
+        file = Music.getAllMusic()
+        return send_file(file, attachment_filename=filename)
 
-
+    except Exception as err:
+        print(err)
+        return {},500
 
 
 ###########################################
 # USERS
 
-# Log in page
+# LOG IN
 @app.route('/login', methods=['GET', 'POST'])
-def Login():
+def login():
     if request.method == 'GET':
         return render_template("login.html", title="Librarian Login")
     elif request.method == 'POST':
+        userJson = request.form
+        username = userJson['username']
+        password = userJson['password']
         try:
-            jsonUser = request.form
-            username = jsonUser['username']
-            password = jsonUser['password']
-            jwtToken = User.loginUser(username, password)
-            output = {'JWT' : jwtToken}
-            return jsonify(output), 200
+            auth = User.loginUser(username, password)
+            if auth:
+                session['username'] = username
+                return redirect('/admin')
         except Exception as err:
             print(err)
             return {}, 500
+
+# LOG OUT
+@app.route('/logout')
+def logout():
+    session['username'] = None
+    return redirect('/')
 
 ###########################################

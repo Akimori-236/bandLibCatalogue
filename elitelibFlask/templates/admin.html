@@ -3,6 +3,11 @@
 
 {% block  content %}
 <script type="text/javascript" src="../static/admin.js"></script>
+<script>
+    $(function() {
+        console.log('Page Loaded.')
+    })
+</script>
 
 <!--error message box-->
 {% for err in errors %}
@@ -49,7 +54,7 @@
             </a>
         </div>
         <div class="card col-md-4 bg-danger ml-2 mt-2">
-            <a href="/uploadcsv" class="text-decoration-none">
+            <a href="/dbimport" class="text-decoration-none">
                 <div class="card-body">
                     <h5 class="card-text text-light text-center">Restore Database with CSV file</h5>
                 </div>

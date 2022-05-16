@@ -1,8 +1,6 @@
 from model.DatabasePool import DatabasePool
 import pandas as pd
 
-ensembleList = ["Concert Band", "Marching Band", "Solo", "Ensemble", "Big Band", "Study", "Reference", "Others"]
-
 class Music:
     #CREATE
     # INSERT new music
@@ -39,6 +37,20 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT * FROM music ORDER BY catalogueNo'
+            cursor.execute(sql)
+            allMusic = cursor.fetchall()
+            return allMusic
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # Print all Music
+    @classmethod
+    def printAllMusic(cls):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
             sql = 'SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks FROM music ORDER BY catalogueNo'
             cursor.execute(sql)
             allMusic = cursor.fetchall()
@@ -47,14 +59,13 @@ class Music:
             dbConn.close()
             print('Connection released')
 
-
     # GET music by categoryID
     @classmethod
     def getMusicByCatID(cls, catID):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music WHERE categoryID=%s ORDER BY catalogueNo'
+            sql = 'SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks FROM music WHERE categoryID=%s ORDER BY catalogueNo'
             cursor.execute(sql, (catID,))
             music = cursor.fetchall()
             return music
@@ -69,7 +80,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music WHERE ensembleType=%s ORDER BY catalogueNo'
+            sql = 'SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks FROM music WHERE ensembleType=%s ORDER BY catalogueNo'
             cursor.execute(sql, (ensemble,))
             music = cursor.fetchall()
             return music
@@ -114,7 +125,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT * from music WHERE title LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE title LIKE concat('%', %s, '%') ORDER BY catalogueNo"
             cursor.execute(sql, (substring,))
             music = cursor.fetchall()
             return music
@@ -128,7 +139,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT * from music WHERE composer LIKE concat('%', %s, '%') OR arranger LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE composer LIKE concat('%', %s, '%') OR arranger LIKE concat('%', %s, '%') ORDER BY catalogueNo"
             cursor.execute(sql, (substring, substring))
             music = cursor.fetchall()
             return music
@@ -142,7 +153,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT * from music WHERE publisher LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE publisher LIKE concat('%', %s, '%') ORDER BY catalogueNo"
             cursor.execute(sql, (substring,))
             music = cursor.fetchall()
             return music
@@ -156,7 +167,7 @@ class Music:
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT * from music WHERE featuredInstrument LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE featuredInstrument LIKE concat('%', %s, '%') ORDER BY catalogueNo"
             cursor.execute(sql, (substring,))
             music = cursor.fetchall()
             return music
@@ -255,7 +266,7 @@ class Music:
                 arranger = row['Arranger']
                 publisher = row['Publisher']
                 featuredInstrument = row['Featured Instrument(s)']
-                ensemble = ensembleList.index(row['Ensemble Type'])   # convert ensemble into ensembleID
+                ensemble = row['Ensemble Type']
                 parts = row['Parts']
                 remarks = row['Remarks']
 

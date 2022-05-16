@@ -4,14 +4,16 @@
 
 <div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">
     <div class="card-body">
-      <h5 class="card-title text-light text-center mb-3">Credits</h5>
-      <h6 class="card-subtitle mb-2 text-muted text-center">{{title}}</h6>
+        <h5 class="card-title text-light text-center mb-3">About</h5>
+        <p class="card-text text-light my-0"> Made by ME1-2 Ng Wee Seng in May 2022 </p>
+        <br><br>
+        <h6 class="card-subtitle mb-2 text-muted text-center">{{title}}</h6>
 
-      {% for member in team %}
-      <p class="card-text text-light my-0"> {{member}} </p>
-      {% endfor %}
+        {% for member in team %}
+            <p class="card-text text-light my-0"> {{member}} </p>
+        {% endfor %}
 
-      <a href="javascript:history.back()" class="card-link mt-4 btn btn-outline-danger">BACK</a>
+        <a href="javascript:history.back()" class="card-link mt-4 btn btn-outline-danger">BACK</a>
     </div>
   </div>
 

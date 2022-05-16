@@ -185,6 +185,8 @@ function getMusicByCatNo() {
 
 // Display all music in a table
 function successDisplayTable(result) {
+    sessionStorage.setItem("searchResult", result['Music']); // use this for print
+    console.log(sessionStorage.getItem("searchResult"))
     $('#searchResults').html("");
     strHTMLcontent = "<a href='/print' class='btn btn-danger m-2'>Printable Version</a>" +
         "<table id='results' class='table table-bordered table-hover table-dark mx-2'>" +
@@ -202,39 +204,40 @@ function successDisplayTable(result) {
         "</tr>" +
         "</thead>";
 
-    var jObjects = result.Music
+    var jObjects = result.Music;
+    console.log(jObjects);
     if (jObjects.length > 0) { // Check if there are any results:
         for (var index in jObjects) {
             // Variables of each row
-            let musicID = result.Music[index][0];
-            let catalogueNo = result.Music[index][1];
-            let catID = result.Music[index][2];
-            let title = result.Music[index][3];
-            let composer = result.Music[index][4];
+            // let musicID = result.Music[index][0];
+            let catalogueNo = result.Music[index][0];
+            // let catID = result.Music[index][2];
+            let title = result.Music[index][1];
+            let composer = result.Music[index][2];
             if (typeof composer  == 'object' || composer  == '') {
                 composer = '-';
             }
-            let arranger = result.Music[index][5];
+            let arranger = result.Music[index][3];
             if (typeof arranger == 'object' || arranger  == '') {
                 arranger = '-';
             }
-            let publisher = result.Music[index][6];
+            let publisher = result.Music[index][4];
             if (typeof publisher == 'object' || publisher == '') {
                 publisher = '-';
             }
-            let featInstru = result.Music[index][7];
+            let featInstru = result.Music[index][5];
             if (typeof featInstru == 'object' || featInstru == '') {
                 featInstru = '-';
             }
-            let ensembleType = result.Music[index][8];
+            let ensembleType = result.Music[index][6];
             if (typeof ensembleType == 'object' || ensembleType == '') {
                 ensembleType = '-'
             }
-            let parts = result.Music[index][9];
+            let parts = result.Music[index][7];
             if (typeof parts == 'object' || parts == '') {
                 parts = '-';
             }
-            let remarks = result.Music[index][10];
+            let remarks = result.Music[index][8];
             if (typeof remarks == 'object' || remarks == '') {
                 remarks = '-';
             }

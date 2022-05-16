@@ -142,3 +142,9 @@
         </div>
     </div>
 </nav>
+
+<div id="logIndicator" class="row">
+    {% if session.username %}
+        <p class="col-auto mx-auto">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-danger">Log Out</a></p>
+    {% endif %}
+</div>

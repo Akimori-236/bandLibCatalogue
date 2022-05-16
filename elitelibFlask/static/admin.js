@@ -196,6 +196,9 @@ function insertMusic() {
             $.ajax({
                 url: 'https://elitelib22.pythonanywhere.com/newmusic',
                 type: 'POST',
+                headers: {
+                    Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
+                },
                 dataType: 'json',
                 data: insertMusic,
                 success: function() {
@@ -242,6 +245,9 @@ function editMusicByCatNo() {
             $.ajax({
                 url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
                 type: 'PUT',
+                headers: {
+                    Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
+                },
                 dataType: 'json',
                 data: editMusic,
                 success: function() {
@@ -276,6 +282,9 @@ function deleteMusicByCatNo() {
         $.ajax({
             url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
             type: 'DELETE',
+            headers: {
+                Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
+            },
             dataType: 'json',
             success: function() {
                 $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-success'>Successfully deleted '" + window.title + "'.</p>");
@@ -299,29 +308,24 @@ function deleteMusicByCatNo() {
 
 
 
-// LOGIN
-function login() {
-    let loginData = {
-        'username': $("#usernameID").val(),
-        'password': $("#passwordID").val(),
-    }
 
+
+function adminLinks(link) {
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/login',
-        type: 'POST',
-        dataType: 'json',
-        data: loginData,
-        success: function(result) {
-            if(result === "no_errors") location.href = "/admin"
+        async: false,
+        type: 'GET',
+        url: link,
+        headers: {
+            Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
         },
-        error: function(request, status, error) {
-            $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Wrong Username or Password: "+request+"-"+status+"-"+error +"</p>");
-            $('html, body').animate({ scrollTop: 0 }, 'fast');
-            console.log("Wrong login credentials. " + error);
-        },
+        contentType: 'text/html',
+        // success: function (result, status, xhr) {
+        //     window.location.href = link;
+        //     // document.write(result);                 // find better alternative
+        // },
+        // error: function (xhr, status, error) {
+        //     console.log('Error: ' + error);
+        //     window.location.href = '/login';
+        // }
     });
-    return false;
 }
-
-
-

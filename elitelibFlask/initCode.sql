@@ -22,11 +22,11 @@ CREATE TABLE `category` (
   UNIQUE INDEX `category_UNIQUE` (`category` ASC));
 
 
-CREATE TABLE `ensemble` (
-  `ensembleID` INT NOT NULL,
-  `ensemble` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`ensembleID`),
-  UNIQUE INDEX `ensembleID_UNIQUE` (`ensembleID` ASC));
+-- CREATE TABLE `ensemble` (
+--   `ensembleID` INT NOT NULL,
+--   `ensemble` VARCHAR(15) NOT NULL,
+--   PRIMARY KEY (`ensembleID`),
+--   UNIQUE INDEX `ensembleID_UNIQUE` (`ensembleID` ASC));
 
 
 CREATE TABLE `user` (
@@ -42,13 +42,13 @@ CREATE TABLE `user` (
 
 
 /* foreign keys init */
-ALTER TABLE `music` ALTER INDEX `ensembleID_idx` VISIBLE;
-ALTER TABLE `music` 
-ADD CONSTRAINT `ensembleID`
-  FOREIGN KEY (`ensembleID`)
-  REFERENCES `ensemble` (`ensembleID`)
-  ON DELETE RESTRICT
-  ON UPDATE CASCADE;
+-- ALTER TABLE `music` ALTER INDEX `ensembleID_idx` VISIBLE;
+-- ALTER TABLE `music` 
+-- ADD CONSTRAINT `ensembleID`
+--   FOREIGN KEY (`ensembleID`)
+--   REFERENCES `ensemble` (`ensembleID`)
+--   ON DELETE RESTRICT
+--   ON UPDATE CASCADE;
 
 ALTER TABLE `music` 
 ADD INDEX `categoryID_idx` (`categoryID` ASC) VISIBLE;
@@ -63,14 +63,14 @@ ADD CONSTRAINT `categoryID`
 
 
 /* Data init */
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('1', 'Concert Band');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('2', 'Marching Band');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('3', 'Solo');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('4', 'Ensemble');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('5', 'Big Band');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('6', 'Study');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('7', 'Reference');
-INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('8', 'Others');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('1', 'Concert Band');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('2', 'Marching Band');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('3', 'Solo');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('4', 'Ensemble');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('5', 'Big Band');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('6', 'Study');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('7', 'Reference');
+-- INSERT INTO `ensemble` (`ensembleID`, `ensemble`) VALUES ('8', 'Others');
 
 
 INSERT INTO `category` (`categoryID`, `category`) VALUES ('00', 'NON-PUBLISHED');
@@ -120,8 +120,5 @@ INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger
 INSERT INTO `music` (`musicID`, `catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`) VALUES ('5', '10-0004-01', '10', 'THE SEVENTH NIGHT OF JULY', 'ITARU SAKAI', 'DE HASKE', '1');
 INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publisher`, `ensembleID`, `remarks`) VALUES ('10-0004-02', '10', 'DAIBUTSU TO SHIKA', 'ITARU SAKAI', 'DE HASKE', '1', 'MISSING 1ST SAXOPHONE (NOT ORIGINAL), Eb CLARINET');
 
-INSERT INTO `user` (`username`, `password`) VALUES ('MasterChief', '3010');
+INSERT INTO `user` (`username`, `password`) VALUES ('SupremeLeader', '3010');
 
-
-
-UPDATE `music` SET `title` = %s, `composer` = %s, `arranger` = %s, `publisher` = %s, `featuredInstrument` = %s, `ensembleID` = %s, `parts` = %s, `remarks` = %s WHERE (`catalogueNo` = %s);
