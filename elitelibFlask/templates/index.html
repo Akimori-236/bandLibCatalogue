@@ -5,6 +5,7 @@
 <script>
     $(function() {
         populateCategoryList('#categoryList');
+        populateEnsembleList('#ensembleList');
         console.log("Page loaded.");
     })
 </script>
@@ -17,14 +18,29 @@
 
 <!-- MAIN DISPLAY -->
 <div class="container-fluid w-100">
-    <!-- CATEGORY SELECTOR -->
     <div class="row mb-3 w-auto mx-auto">
-        <div class="form-floating w-auto mx-auto">
-            <select class="form-select" id="categoryList" onchange="selectCategory();">
-                <!-- Options populated on load -->
-            </select>
-            <label for="categoryList" class="form-label ms-2">Categories</label>
-        </div>
+        <!-- Search function -->
+        <form class="d-flex w-auto mx-auto my-auto" id="searchID" action="#" onsubmit="return searchMusic();">
+            <!--Search type selection-->
+            <div class="">
+                <select id="searchselectID" class="form-control text-end border border-danger rounded-start flex-shrink-1">
+                    <option value="title">Title:</option>
+                    <option value="comparr">Composer/Arranger:</option>
+                    <option value="publisher">Publisher:</option>
+                    <option value="feat">Featured Instrument:</option>
+                </select>
+                <!--<label for="searchselectID">Search by</label>-->
+            </div>
+            <!--Search input-->
+            <input
+                id="searchtextboxID"
+                class="form-control me-2"
+                type="text"
+                placeholder="Search"
+                aria-label="Search"
+            />
+            <input class="btn btn-danger" type="submit" value="Search"/>        <!--make it redirect to index everytime-->
+        </form>
     </div>
 
 

@@ -88,10 +88,26 @@ const deleteBtn = `<button type="button" class="btn btn-outline-danger">
     <span class="visually-hidden">Button</span>
 </button>`;
 
+// Show music by ensemble type
+function selectEnsemble() {
+    $('#categoryList').val('');
+    var ensembleID = $('#ensembleList').val();
+    var strHTMLcontent = ""; // insert search result
+    console.log("Getting Ensemble Type:" + String(ensembleID));
+    $.ajax({
+        url: '/ensemble/' + String(ensembleID),
+        type: 'GET',
+        dataType: 'json',
+        success: successDisplayTable,
+        error: showErrorMsg,
+    });
 
+    return false;
+}
 
 // Show music by category
 function selectCategory() {
+    $('#ensembleList').val('');
     var categoryID = $('#categoryList').val();
     var strHTMLcontent = ""; // insert search result
     console.log("Getting Category:" + String(categoryID));
@@ -187,7 +203,7 @@ function getMusicByCatNo() {
 // Display all music in a table
 function successDisplayTable(result) {
     sessionStorage.setItem("searchResult", result['Music']); // use this for print
-    console.log(sessionStorage.getItem("searchResult"))
+    // console.log(sessionStorage.getItem("searchResult"))
     $('#searchResults').html("");
     strHTMLcontent = "<a href='/print' class='btn btn-danger m-2'>Printable Version</a>" +
         "<table id='results' class='table table-bordered table-hover table-dark mx-2'>" +
@@ -206,7 +222,7 @@ function successDisplayTable(result) {
         "</thead>";
 
     var jObjects = result.Music;
-    console.log(jObjects);
+    // console.log(jObjects);
     if (jObjects.length > 0) { // Check if there are any results:
         for (var index in jObjects) {
             // Variables of each row
@@ -302,7 +318,7 @@ function showAbout() {
 
 // Error message
 function showErrorMsg(xhr, status, strErr) {
-  $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
+  $('#searchResults').html('<div class="card bg-dark border border-danger rounded-3 mx-auto" style="width: 18rem;">' +
                             '<div class="card-body">' +
                             '<h5 class="card-title text-light text-center">'+ capitalise(status) +'</h5>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">' + strErr + '</h6>' +
@@ -311,3 +327,5 @@ function showErrorMsg(xhr, status, strErr) {
                             '</div>'
                             );
 }
+
+

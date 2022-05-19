@@ -28,79 +28,6 @@
                     <a class="nav-link text-light" aria-current="page" href="/">Home</a>
                 </li>
 
-
-
-                 <!--Ensemble Type Dropdown List-->
-                <li class="nav-item dropdown ms-3">
-                    <a class="nav-link active dropdown-toggle text-light"
-                        href="/"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
-                        Ensemble Types
-                    </a>
-                    <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
-
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('CONCERT BAND')"
-                                >Concert Band</a>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('MARCHING BAND')"
-                                >Marching Band</a>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('SOLO')"
-                                >Solo</a>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('ENSEMBLE')"
-                                >Ensemble</a>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('BIG BAND')"
-                                >Big Band</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider text-light"/>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('STUDY')"
-                                >Study</a>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('REFERENCE')"
-                                >Reference</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider text-light"/>
-                        </li>
-                        <li>
-                            <a
-                                class="dropdown-item text-light"
-                                onclick="getMusicByEnsembleType('OTHERS')"
-                                >Others</a>
-                        </li>
-                    </ul>
-                </li>
-
-
                 <!-- 2nd nav link -->
                 <li class="nav-item ms-3">
                     <a href="/printdb" class="nav-link text-light" aria-current="page" >Print Database</a>
@@ -120,38 +47,38 @@
             </ul>
 
 
+            <!-- ENSEMBLE SELECTOR -->
+            <div class="form-floating w-auto mx-2">
+                <select class="form-select" id="ensembleList" onchange="selectEnsemble();">
+                    <!-- Options populated on load -->
+                </select>
+                <label for="ensembleList" class="form-label ms-2">Ensemble Types</label>
+            </div>
 
-            <!-- Search function -->
-            <form class="d-flex my-auto" id="searchID" action="#" onsubmit="return searchMusic();">
-                <!--Search type selection-->
-                <div class="">
-                    <select id="searchselectID" class="form-control text-end border border-danger rounded-start flex-shrink-1">
-                        <option value="title">Title:</option>
-                        <option value="comparr">Composer/Arranger:</option>
-                        <option value="publisher">Publisher:</option>
-                        <option value="feat">Featured Instrument:</option>
-                    </select>
-                    <!--<label for="searchselectID">Search by</label>-->
-                </div>
-                <!--Search input-->
-                <input
-                    id="searchtextboxID"
-                    class="form-control me-2"
-                    type="text"
-                    placeholder="Search"
-                    aria-label="Search"
-                />
-                <input class="btn btn-danger" type="submit" value="Search"/>        <!--make it redirect to index everytime-->
-            </form>
+            <!-- CATEGORY SELECTOR -->
+            <div class="form-floating w-auto mx-2">
+                <select class="form-select" id="categoryList" onchange="selectCategory();">
+                    <!-- Options populated on load -->
+                </select>
+                <label for="categoryList" class="form-label ms-2">Categories</label>
+            </div>
+            <!--log in/out-->
+            <div id="loginbtn">
+                {% if session.username %}
+                    <span class="text-light">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-primary">Log Out</a></span>
+                {% else %}
+                    <a href="/login" class="my-auto btn btn-danger">Log In</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>
 
-<div id="logIndicator" class="row">
-    {% if session.username %}
-        <p class="col-auto ms-auto me-3">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-primary">Log Out</a></p>
-    {% endif %}
-</div>
+<!--<div id="logIndicator" class="row">-->
+<!--    {% if session.username %}-->
+<!--        <p class="col-auto ms-auto me-3">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-primary">Log Out</a></p>-->
+<!--    {% endif %}-->
+<!--</div>-->
 
 <!--flash message box-->
 <div class="row">
