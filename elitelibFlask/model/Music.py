@@ -2,6 +2,7 @@ from model.DatabasePool import DatabasePool
 
 # Data Cleaner?
 def clean(x):
+    x = x.strip()
     if x == '-':
         x = ''
     return x
