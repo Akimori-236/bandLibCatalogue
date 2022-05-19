@@ -23,7 +23,8 @@ function populateEnsembleList(ID) {
 }
 
 // Categories
-const categories = [['00', 'Non-Published'],
+const categories = [
+                    ['00', 'Non-Published'],
                     ['10', 'Wind Band'],
                     ['11', 'Wind Band (A5)'],
                     ['12', 'Ceremonial Music'],
@@ -63,7 +64,7 @@ const categories = [['00', 'Non-Published'],
                     ['92', 'Miscellaneous/Archive Disc'],
                     ['93', 'Wind Band Training Disc'],
                     ['94', 'Marching Band Disc']
-];
+                    ];
 function populateCategoryList(ID) {
     var output = '<option selected disabled hidden>             </option>'
     for (let i=0; i < categories.length; i++) {
@@ -95,7 +96,7 @@ function selectCategory() {
     var strHTMLcontent = ""; // insert search result
     console.log("Getting Category:" + String(categoryID));
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/category/' + String(categoryID),
+        url: '/category/' + String(categoryID),
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -113,7 +114,7 @@ function getAllMusic() {
     var strHTMLcontent = ""; // insert search result
 
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/music/',
+        url: '/music/',
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -126,7 +127,7 @@ function getAllMusic() {
 
 function getMusicByEnsembleType(ensemble) {
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/ensemble/' + ensemble,
+        url: '/ensemble/' + ensemble,
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -149,7 +150,7 @@ function getMusicByCatNo() {
     var remarks = $('#remarksID');
 
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/music/catno/' + catNo,
+        url: '/music/catno/' + catNo,
         type: 'GET',
         dataType: 'json',
         success: function(result) {
@@ -209,9 +210,7 @@ function successDisplayTable(result) {
     if (jObjects.length > 0) { // Check if there are any results:
         for (var index in jObjects) {
             // Variables of each row
-            // let musicID = result.Music[index][0];
             let catalogueNo = result.Music[index][0];
-            // let catID = result.Music[index][2];
             let title = result.Music[index][1];
             let composer = result.Music[index][2];
             if (typeof composer  == 'object' || composer  == '') {
@@ -272,7 +271,7 @@ function searchMusic() {
     console.log('Searching for: ' + query);
 
     $.ajax({
-        url: 'https://elitelib22.pythonanywhere.com/search/'+ searchType +'?q=' + query,
+        url: '/search?type='+searchType+'&q='+query,
         type: 'GET',
         dataType: 'json',
         success: successDisplayTable,
@@ -285,10 +284,10 @@ function searchMusic() {
 
 // about lol
 function showAbout() {
-  $('#searchResults').html('<div class="card bg-dark position-absolute top-50 start-50 translate-middle border border-danger rounded-3" style="width: 18rem;">' +
+  $('#searchResults').html('<div class="card bg-dark border border-danger rounded-3 mx-auto" style="width: 18rem;">' +
                             '<div class="card-body">' +
                             '<h5 class="card-title text-light text-center mb-3">About</h5>' +
-                            '<p class="card-text text-light my-0"> Created by ME1-2 Ng Wee Seng in April-May 2022 </p>' +
+                            '<p class="card-text text-light my-0">Ver.1.0 created by ME1-2 Ng Wee Seng in May 2022.</p>' +
                             '<br><br>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">Band Digitalization Team 2022</h6>' +
                             '<p class="card-text text-light my-0"> ME2-2 Joe Tan </p>' +
@@ -312,5 +311,3 @@ function showErrorMsg(xhr, status, strErr) {
                             '</div>'
                             );
 }
-
-

@@ -101,17 +101,21 @@
                 </li>
 
 
-
                 <!-- 2nd nav link -->
+                <li class="nav-item ms-3">
+                    <a href="/printdb" class="nav-link text-light" aria-current="page" >Print Database</a>
+                </li>
+
+
+                <!-- 3rd nav link -->
                 <li class="nav-item ms-3">
                     <a class="nav-link text-light" aria-current="page" onclick="showAbout();">About</a>
                 </li>
 
 
-                <!--3rd nav link-->
+                <!--4th nav link-->
                 <li class="nav-item ms-3">
-                    <a class="nav-link text-light" href="/admin"
-                        >Admin Tools</a>
+                    <a href="/admin" class="nav-link text-light">Admin Tools</a>
                 </li>
             </ul>
 
@@ -145,6 +149,25 @@
 
 <div id="logIndicator" class="row">
     {% if session.username %}
-        <p class="col-auto mx-auto">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-danger">Log Out</a></p>
+        <p class="col-auto ms-auto me-3">Logged in as {{session.username}} <a href="/logout" class="my-auto btn btn-primary">Log Out</a></p>
     {% endif %}
+</div>
+
+<!--flash message box-->
+<div class="row">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    {% if category == 'success' %}
+                        <li class="col-auto mx-auto alert alert-success">{{ message }}</li>
+                    {% elif category == 'error' %}
+                        <li class="col-auto mx-auto alert alert-danger">{{ message }}</li>
+                    {% else %}
+                        <li class="col-auto mx-auto alert alert-info">{{ message }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </div>

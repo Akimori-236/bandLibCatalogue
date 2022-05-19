@@ -1,5 +1,12 @@
 from model.DatabasePool import DatabasePool
-import pandas as pd
+
+# Data Cleaner?
+def clean(x):
+    if x == '-':
+        x = ''
+    return x
+
+
 
 class Music:
     #CREATE
@@ -34,20 +41,6 @@ class Music:
     # GET all Music
     @classmethod
     def getAllMusic(cls):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = 'SELECT * FROM music ORDER BY catalogueNo'
-            cursor.execute(sql)
-            allMusic = cursor.fetchall()
-            return allMusic
-        finally:
-            dbConn.close()
-            print('Connection released')
-
-    # Print all Music
-    @classmethod
-    def printAllMusic(cls):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
@@ -119,61 +112,32 @@ class Music:
             print('Connection released')
 
 
-    # SEARCH music by title
+
+    # SEARCH music
     @classmethod
-    def searchMusicByTitle(cls, substring):
+    def searchMusic(cls, searchType, query):
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE title LIKE concat('%', %s, '%') ORDER BY catalogueNo"
-            cursor.execute(sql, (substring,))
+            if searchType=='title':
+                sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE title LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+                cursor.execute(sql, (query,))
+            elif searchType=='comparr':
+                sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE composer LIKE concat('%', %s, '%') OR arranger LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+                cursor.execute(sql, (query, query))
+            elif searchType=='publisher':
+                sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE publisher LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+                cursor.execute(sql, (query,))
+            elif searchType=='feat':
+                sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE featuredInstrument LIKE concat('%', %s, '%') ORDER BY catalogueNo"
+                cursor.execute(sql, (query,))
             music = cursor.fetchall()
             return music
         finally:
             dbConn.close()
             print('Connection released')
 
-    # SEARCH music by composer/arranger
-    @classmethod
-    def searchMusicByCompArr(cls, substring):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE composer LIKE concat('%', %s, '%') OR arranger LIKE concat('%', %s, '%') ORDER BY catalogueNo"
-            cursor.execute(sql, (substring, substring))
-            music = cursor.fetchall()
-            return music
-        finally:
-            dbConn.close()
-            print('Connection released')
 
-    # SEARCH music by Publisher
-    @classmethod
-    def searchMusicByPublisher(cls, substring):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE publisher LIKE concat('%', %s, '%') ORDER BY catalogueNo"
-            cursor.execute(sql, (substring,))
-            music = cursor.fetchall()
-            return music
-        finally:
-            dbConn.close()
-            print('Connection released')
-
-    # SEARCH music by Featured Instrument
-    @classmethod
-    def searchMusicByFeatInstru(cls, substring):
-        try:
-            dbConn = DatabasePool.getConnection()
-            cursor = dbConn.cursor(buffered=True)
-            sql = "SELECT catalogueNo, title, composer, arranger, publisher, featuredInstrument, ensembleType, parts, remarks from music WHERE featuredInstrument LIKE concat('%', %s, '%') ORDER BY catalogueNo"
-            cursor.execute(sql, (substring,))
-            music = cursor.fetchall()
-            return music
-        finally:
-            dbConn.close()
-            print('Connection released')
 
     # GET Boxes
     @classmethod
@@ -183,6 +147,31 @@ class Music:
             cursor = dbConn.cursor(buffered=True)
             sql = "SELECT catalogueNo FROM music WHERE categoryID=%s ORDER BY catalogueNo"
             cursor.execute(sql, (catNo,))
+            catalogueNoList = cursor.fetchall()
+            boxList = []
+            for num in catalogueNoList:
+                boxList.append(num[0][3:])
+            return boxList
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+    # Search similar pieces from same composer
+    @classmethod
+    def searchSimilarMusic(cls, composer, title):
+        title = title.split()
+        determiners = ['a','an','the','this','that','these','those','my','your','his','her','its','our','their']
+        keywords = ""
+        # take out common words
+        for i in title:
+            if i not in determiners:
+                keywords += i
+
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = "SELECT catalogueNo, title FROM music WHERE composer=%s AND MATCH(title) AGAINST(%s)"
+            cursor.execute(sql, (composer, keywords))
             catalogueNoList = cursor.fetchall()
             boxList = []
             for num in catalogueNoList:
@@ -238,10 +227,12 @@ class Music:
 
 
     ##################################################
+
     # Wipe out current table and create new with CSV data
     @classmethod
-    def parseCSV(cls, filePath):
-        rows = 0
+    def resetDB(cls, data):
+        # print(data)
+        rowcounter = 0
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
@@ -251,32 +242,82 @@ class Music:
             cursor.execute(sql)
             dbConn.commit()
 
-            # CVS Column Names
-            col_names = ['Catalogue Number','Title','Composer', 'Arranger', 'Publisher', 'Featured Instrument(s)', 'Ensemble Type', 'Parts', 'Remarks']
-            # Use Pandas to parse the CSV file
-            csvData = pd.read_csv(filePath,names=col_names, header=None)
-
             # Loop through the Rows
-            for i,row in csvData.iterrows():
-
-                catalogueNo = row['Catalogue Number']
-                categoryID = int((row['Catalogue Number'])[:2]) + 1     # extract catID from catNo
-                title = row['Title']
-                composer = row['Composer']
-                arranger = row['Arranger']
-                publisher = row['Publisher']
-                featuredInstrument = row['Featured Instrument(s)']
-                ensemble = row['Ensemble Type']
-                parts = row['Parts']
-                remarks = row['Remarks']
-
-                # can we call insertMusic()???
+            for i in range(1,len(data)):
+                rows = data[i].split(',')
+                # Data pts
+                catalogueNo = rows[0]
+                categoryID = (rows[0])[:2]           # extract catID from catNo
+                title = rows[1]
+                composer = rows[2]
+                arranger = rows[3]
+                publisher = rows[4]
+                feat = rows[5]
+                ensemble = rows[6]
+                parts = rows[7]
+                remarks = rows[8].strip('\n')
+                # clean data pts
+                clean(composer)
+                clean(arranger)
+                clean(publisher)
+                clean(feat)
+                clean(ensemble)
+                clean(parts)
+                clean(remarks)
+                # INSERT ENTRY
                 sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (catalogueNo, categoryID, title, composer, arranger, publisher, featuredInstrument, ensemble, parts, remarks)
+                values = (catalogueNo, categoryID, title, composer, arranger, publisher, feat, ensemble, parts, remarks)
+                # print(values)
                 cursor.execute(sql, values)
                 dbConn.commit()
-                rows += 1
-            return rows
+                rowcounter += 1
+            # RETURN no of successful entries
+            return rowcounter
+        finally:
+            dbConn.close()
+            print("Connection released")
+
+
+    # Bulk entry by CSV file
+    @classmethod
+    def bulkEntry(cls, data):
+        # print(data)
+        rowcounter = 0
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+
+            # Loop through the Rows
+            for i in range(1,len(data)):
+                rows = data[i].split(',')
+                # Data pts
+                catalogueNo = rows[0]
+                categoryID = (rows[0])[:2]           # extract catID from catNo
+                title = rows[1]
+                composer = rows[2]
+                arranger = rows[3]
+                publisher = rows[4]
+                feat = rows[5]
+                ensemble = rows[6]
+                parts = rows[7]
+                remarks = rows[8].strip('\n')
+                # clean data pts
+                clean(composer)
+                clean(arranger)
+                clean(publisher)
+                clean(feat)
+                clean(ensemble)
+                clean(parts)
+                clean(remarks)
+                # INSERT ENTRY
+                sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (catalogueNo, categoryID, title, composer, arranger, publisher, feat, ensemble, parts, remarks)
+                # print(values)
+                cursor.execute(sql, values)
+                dbConn.commit()
+                rowcounter += 1
+            # RETURN no of successful entries
+            return rowcounter
         finally:
             dbConn.close()
             print("Connection released")

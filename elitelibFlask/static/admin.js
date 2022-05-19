@@ -20,7 +20,7 @@ function categorySelected() {
     // GET current boxes
     $.ajax({
         url:
-            "https://elitelib22.pythonanywhere.com/boxes/" + String(selectedCat),
+            "/boxes/" + String(selectedCat),
         type: "GET",
         dataType: "json",
         success: populateAvailableBoxes,
@@ -174,8 +174,27 @@ function toggleExistingOrOversized() {
     $("#boxList").html(output);
 }
 
+
+
 // Insert Music
 function insertMusic() {
+    // Values
+    let composer = $("#composerID").val().toUpperCase().replace(/\s+/g, " ").trim();
+    let title = $("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim();
+    // Check for similar titles form same composer
+    $.ajax({
+        url: '/search/similar/?composer='+composer+'&title='+title,
+        type: 'GET',
+        dataType: 'json',
+        success: confirmInsertMusic,
+        error: function(request, status, error) {
+            console.log('Error: '+request+' - '+status+' - '+error)
+        },
+    })
+}
+
+// Confirm Insert Music
+function confirmInsertMusic() {
     if ($("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim() == "") {
         $('#msgbox').html("<p class='text-center mx-auto w-auto rounded-pill text-white bg-danger'>Please do not mess with the source code.</p>");
     } else {
@@ -223,6 +242,7 @@ function insertMusic() {
 }
 
 
+
 // edit music
 function editMusicByCatNo() {
     if ($("#titleID").val().toUpperCase().replace(/\s+/g, " ").trim() == "") {
@@ -243,7 +263,7 @@ function editMusicByCatNo() {
         }
         if (confirm("Confirm edit '"+ window.title +"'?")) {
             $.ajax({
-                url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
+                url: '/music/' + catNo,
                 type: 'PUT',
                 headers: {
                     Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
@@ -280,7 +300,7 @@ function deleteMusicByCatNo() {
         var catNo = $('#catalogueNoID').val();
 
         $.ajax({
-            url: 'https://elitelib22.pythonanywhere.com/music/' + catNo,
+            url: '/music/' + catNo,
             type: 'DELETE',
             headers: {
                 Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
@@ -304,28 +324,4 @@ function deleteMusicByCatNo() {
         console.log("Cancelled insertion of '" + window.title + "'.");
     }
     return false;
-}
-
-
-
-
-
-function adminLinks(link) {
-    $.ajax({
-        async: false,
-        type: 'GET',
-        url: link,
-        headers: {
-            Authorization: 'Bearer ' + sessionStorage.getItem("JWT")
-        },
-        contentType: 'text/html',
-        // success: function (result, status, xhr) {
-        //     window.location.href = link;
-        //     // document.write(result);                 // find better alternative
-        // },
-        // error: function (xhr, status, error) {
-        //     console.log('Error: ' + error);
-        //     window.location.href = '/login';
-        // }
-    });
 }

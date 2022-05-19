@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session, send_file
 from flask_session import Session
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import os
 import datetime
+import csv
 from model.Music import Music
 from model.User import User
 
@@ -40,12 +42,20 @@ def about():
 def printFormat():
     return render_template("print.html", title="Print Search Results")
 
-# upload csv form
-@app.route('/uploadcsv')
-def uploadCSV():
+# database reset form
+@app.route('/dbimport')
+def importDatabaseForm():
     if not session.get('username'):
         return redirect('/login')
-    return render_template("uploadcsv.html", title="Restore Database")
+    return render_template("resetdb.html", title="Reset Database")
+
+# bulk entry form
+@app.route('/bulkentry')
+def bulkEntryForm():
+    if not session.get('username'):
+        return redirect('/login')
+    return render_template("bulkentry.html", title="Bulk Entry into Database")
+
 
 # form for Inserting new music
 @app.route('/newmusic')
@@ -93,7 +103,7 @@ def insertMusic():
         jsonMusic = request.form
         rows = Music.insertMusic(jsonMusic)
         if rows > 0:
-            flash("Music inserted successfully", "info")
+            flash("Music inserted successfully", "success")
         output = {"Music Inserted": rows}
         return jsonify(output), 201     # Successful creation
     except Exception as err:
@@ -102,21 +112,11 @@ def insertMusic():
 
 ##################################################
 # READ
-# GET all Music [keep for csv exporting for db backup]
-@app.route('/music')
-def getAllMusic():
-    try:
-        jsonMusic = Music.getAllMusic()
-        output = {"Music": jsonMusic}
-        return jsonify(output), 200     # OK
-    except Exception as err:
-        print(err)
-        return {}, 500                  # internal server error
-
+# Print format of whole database
 @app.route('/printdb')
 def printAllMusic():
     try:
-        jsonMusic = Music.printAllMusic()
+        jsonMusic = Music.getAllMusic()
         return render_template("print.html", data=jsonMusic, title="Print Catalogue")
     except Exception as err:
         print(err)
@@ -187,14 +187,15 @@ def getMusicByCatNo(catNo):
         print(err)
         return {}, 500      # internal server error
 
-
-
-# SEARCH music by title
-@app.route('/search/title')
-def searchMusicByTitle():
+# SEARCH music
+@app.route('/search')
+def searchMusic():
     try:
-        query = request.args['q']           # use request.form for POST method
-        music = Music.searchMusicByTitle(query)
+        searchType = request.args['type']
+        query  = request.args['q']
+
+        music = Music.searchMusic(searchType, query)
+
         if len(music) > 0:
             output = {"Music": music}
             return jsonify(output), 200      # OK
@@ -205,53 +206,24 @@ def searchMusicByTitle():
         print(err)
         return {}, 500       # Internal Server Error
 
-# SEARCH music by composer/arranger
-@app.route('/search/comparr')
-def searchMusicByCompArr():
+
+
+# Check for similar music from same composer
+@app.route('/search/similar')
+def similarMusic():
     try:
-        query = request.args['q']           # use request.form for POST method
-        music = Music.searchMusicByCompArr(query)
+        composer = request.args['composer']
+        title = request.args['title']
+        music = Music.searchSimilarMusic(composer, title)
         if len(music) > 0:
             output = {"Music": music}
-            return jsonify(output), 200      # OK
         else:
             output = {}
-            return jsonify(output), 404      # Not Found
+        return jsonify(output), 200      # OK
     except Exception as err:
         print(err)
         return {}, 500       # Internal Server Error
 
-# SEARCH music by publisher
-@app.route('/search/publisher')
-def searchMusicByPublisher():
-    try:
-        query = request.args['q']           # use request.form for POST method
-        music = Music.searchMusicByPublisher(query)
-        if len(music) > 0:
-            output = {"Music": music}
-            return jsonify(output), 200      # OK
-        else:
-            output = {}
-            return jsonify(output), 404      # Not Found
-    except Exception as err:
-        print(err)
-        return {}, 500       # Internal Server Error
-
-# SEARCH music by Featured Instrument
-@app.route('/search/feat')
-def searchMusicByFeatInstru():
-    try:
-        query = request.args['q']           # use request.form for POST method
-        music = Music.searchMusicByFeatInstru(query)
-        if len(music) > 0:
-            output = {"Music": music}
-            return jsonify(output), 200      # OK
-        else:
-            output = {}
-            return jsonify(output), 404      # Not Found
-    except Exception as err:
-        print(err)
-        return {}, 500       # Internal Server Error
 
 # GET boxes in given category
 @app.route('/boxes/<catNo>')
@@ -265,6 +237,7 @@ def getEmptyBoxes(catNo):
         return {}, 500      # internal server error
 
 
+
 ##################################################
 # UPDATE
 # EDIT EXISTING MUSIC
@@ -276,7 +249,7 @@ def editMusicByCatNo(catNo):
         jsonMusic = request.form
         rows = Music.editMusicByCatNo(catNo, jsonMusic)
         if rows > 0:
-            flash("Music edited successfully", "info")
+            flash("Music edited successfully", "success")
         output = {"Music Edited": rows}
         return jsonify(output), 201     # Successful creation
     except Exception as err:
@@ -293,7 +266,7 @@ def deleteMusicByCatNo(catNo):
     try:
         rows = Music.deleteMusicByCatNo(catNo)
         if rows > 0:
-            flash("FlashMsg: Music deleted successfully", "success")
+            flash("Music deleted successfully", "success")
         output = {"Rows Affected": rows}
         return jsonify(output), 200
     except Exception as err:
@@ -304,47 +277,146 @@ def deleteMusicByCatNo(catNo):
 
 ##############################################################
 
-# Restore database by inputting a csv file [not working]
-# Upload folder
-UPLOAD_FOLDER = 'static/files'
-app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+# Reset database by inputting a csv file
+# Set upload folder
+UPLOAD_FOLDER = '/home/elitelib22/mysite/importedfiles/'
+ALLOWED_EXTENSIONS = {'txt', 'csv'}
+
+# check uploaded file for allowed ext
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/dbimport', methods=['POST'])
-def restoreDB():
+def dbimport():
+    # redirect if not logged in
     if not session.get('username'):
         return redirect('/login')
-    try:
-        # get the uploaded file
-        uploaded_file = request.files['file']
-        if uploaded_file.filename != '':
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
-            # set the file path
-            uploaded_file.save(file_path)
-            # save the file
-            return redirect(url_for('index'))
 
-        rows = Music.DBReset(uploaded_file)
-        output = {"Music Inserted": rows}
-        return jsonify(output), 201     # Successful creation
+    try:
+        # GET FILE
+        uploadedFile = request.files['file']
+        secureFilename = secure_filename(uploadedFile.filename)
+        if uploadedFile.filename != '' and allowed_file(uploadedFile.filename):
+            # set the file path
+            global filepath
+            filepath = UPLOAD_FOLDER + secureFilename
+            # SAVE FILE
+            uploadedFile.save(filepath)
+            print("File Uploaded - " + secureFilename)
+            flash('File Uploaded. Reading...', 'success')
+        else:
+            flash('Filename Error.', 'error')
+            return redirect(url_for('admin'))
     except Exception as err:
         print(err)
-        return {},500
+        flash(err, 'error')
+        return render_template('500.html')
+
+    # OPEN CSV FILE
+    try:
+        file = open(filepath, 'r')
+        data = file.readlines()
+        linecount = len(data)
+        flash(str(linecount-1)+' Entries Received.', 'info')
+        # Rebuild DB with new data
+        rows = Music.resetDB(data)
+        flash('Database Rebuilt. '+str(rows)+' Entries Inserted.', 'success')
+        return redirect('/')
+    except Exception as err:
+        print(err)
+        return render_template('500.html')
+    # CSV Reader
+    # reader = csv.reader(file, delimiter=',' [, dialect='excel']
+    # for row in reader:
+    #     process(row)
+    finally:
+        file.close()            # IMPT
+
+
+
 
 # EXPORT CSV FILE
 @app.route('/dbexport')
 def dbexport():
+    # redirect if not logged in
     if not session.get('username'):
         return redirect('/login')
+    # set filename
     todayDate = datetime.datetime.now()
     todayDate = todayDate.strftime("%d%m%y")
     filename = "LibCatalog" + todayDate + ".csv"
+    filepath = "/home/elitelib22/mysite/forexport/"+filename
+    headers = ['Catalogue No','Title','Composer','Arranger','Publisher','Featured Instrument','Ensemble Type','Parts','Remarks']
     try:
-        file = Music.getAllMusic()
-        return send_file(file, attachment_filename=filename)
+        data = Music.getAllMusic()
+
+        # make data into csv file
+        f = open(filepath, 'w')
+        # make csv writer
+        writer = csv.writer(f)
+        # input header & data
+        writer.writerow(headers)
+        writer.writerows(data)
+        # IMPT
+        f.close()
+        return send_file(filepath, mimetype='document',attachment_filename=filename, as_attachment=True)
 
     except Exception as err:
         print(err)
         return {},500
+
+# Bulk Entry by CSV File
+# Set upload folder
+UPLOAD_FOLDER = '/home/elitelib22/mysite/importedfiles/'
+ALLOWED_EXTENSIONS = {'txt', 'csv'}
+
+@app.route('/bulkentry', methods=['POST'])
+def bulkEntry():
+    # redirect if not logged in
+    if not session.get('username'):
+        return redirect('/login')
+
+    try:
+        # GET FILE
+        uploadedFile = request.files['file']
+        secureFilename = secure_filename(uploadedFile.filename)
+        if uploadedFile.filename != '' and allowed_file(uploadedFile.filename):
+            # set the file path
+            global filepath
+            filepath = UPLOAD_FOLDER + secureFilename
+            # SAVE FILE
+            uploadedFile.save(filepath)
+            print("File Uploaded - " + secureFilename)
+            flash('File Uploaded. Reading...', 'success')
+        else:
+            flash('Filename Error.', 'error')
+            return redirect(url_for('admin'))
+    except Exception as err:
+        print(err)
+        flash(err, 'error')
+        return render_template('500.html')
+
+    # OPEN CSV FILE
+    try:
+        file = open(filepath, 'r')
+        data = file.readlines()
+        linecount = len(data)
+        flash(str(linecount-1)+' Entries Received.', 'info')
+        # Rebuild DB with new data
+        rows = Music.bulkEntry(data)
+        flash('Database Rebuilt. '+str(rows)+' Entries Inserted.', 'success')
+        return redirect('/')
+    except Exception as err:
+        print(err)
+        return render_template('500.html')
+    # CSV Reader
+    # reader = csv.reader(file, delimiter=',' [, dialect='excel']
+    # for row in reader:
+    #     process(row)
+    finally:
+        file.close()            # IMPT
+
 
 
 ###########################################
@@ -363,6 +435,7 @@ def login():
             auth = User.loginUser(username, password)
             if auth:
                 session['username'] = username
+                flash('You are logged in', 'success')
                 return redirect('/admin')
         except Exception as err:
             print(err)

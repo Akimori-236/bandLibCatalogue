@@ -13,6 +13,7 @@ CREATE TABLE `music` (
   PRIMARY KEY (`musicID`),
   UNIQUE INDEX `catalogueNo_UNIQUE` (`catalogueNo` ASC));
 
+ALTER TABLE `music` ADD FULLTEXT(title);
 
 CREATE TABLE `category` (
   `categoryID` INT NOT NULL,
@@ -122,3 +123,4 @@ INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `publishe
 
 INSERT INTO `user` (`username`, `password`) VALUES ('SupremeLeader', '3010');
 
+SELECT title FROM music WHERE MATCH(title) AGAINST('overture 1812');

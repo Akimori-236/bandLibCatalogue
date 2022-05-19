@@ -9,11 +9,6 @@
     })
 </script>
 
-<!--error message box-->
-{% for err in errors %}
-<p class="bg-danger text-light text-center">{{err}}</p>
-{% endfor %}
-
 <!--CARD GRID for Admin options-->
 <!--Grid of Cards-->
 <div class="col-lg-3">
@@ -56,18 +51,24 @@
         <div class="card col-md-4 bg-danger ml-2 mt-2">
             <a href="/dbimport" class="text-decoration-none">
                 <div class="card-body">
-                    <h5 class="card-text text-light text-center">Restore Database with CSV file</h5>
+                    <h5 class="card-text text-light text-center">Reset Database with CSV file</h5>
                 </div>
             </a>
         </div>
         <div class="card col-md-4 bg-info ml-2 mt-2">
-            <a href="/printdb" class="text-decoration-none">
-                <!--<img style="width:100%" src="images/photo1.jpg" alt="">-->
+            <a href="/bulkentry" class="text-decoration-none">
                 <div class="card-body">
-                    <h5 class="card-text text-light text-center">Print out Database</h5>
+                    <h5 class="card-text text-light text-center">Bulk Entry into Database</h5>
                 </div>
             </a>
         </div>
+        <!--<div class="card col-md-4 bg-info ml-2 mt-2">-->
+        <!--    <a href="/printdb" class="text-decoration-none">-->
+        <!--        <div class="card-body">-->
+        <!--            <h5 class="card-text text-light text-center">Print out Database</h5>-->
+        <!--        </div>-->
+        <!--    </a>-->
+        <!--</div>-->
     </div>
 </div>
 
