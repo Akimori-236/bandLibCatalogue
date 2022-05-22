@@ -318,9 +318,10 @@ function showAbout() {
 
 // Error message
 function showErrorMsg(xhr, status, strErr) {
-  $('#searchResults').html('<div class="card bg-dark border border-danger rounded-3 mx-auto" style="width: 18rem;">' +
+    let statusCode = xhr.status;
+    $('#searchResults').html('<div class="card bg-dark border border-danger rounded-3 mx-auto" style="width: 18rem;">' +
                             '<div class="card-body">' +
-                            '<h5 class="card-title text-light text-center">'+ capitalise(status) +'</h5>' +
+                            '<h5 class="card-title text-light text-center">'+ capitalise(status) +' '+ statusCode +'</h5>' +
                             '<h6 class="card-subtitle mb-2 text-muted text-center">' + strErr + '</h6>' +
                             '<p class="card-text text-light text-center">Sorry ah, cannot find.</p>' +
                             '</div>' +

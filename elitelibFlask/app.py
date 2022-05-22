@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, f
 from flask_session import Session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import os
 import datetime
 import csv
 from model.Music import Music
@@ -117,7 +116,7 @@ def insertMusic():
 def printAllMusic():
     try:
         jsonMusic = Music.getAllMusic()
-        return render_template("print.html", data=jsonMusic, title="Print Catalogue")
+        return render_template("printdb.html", data=jsonMusic, title="Print Catalogue")
     except Exception as err:
         print(err)
         return {}, 500                  # internal server error
@@ -307,29 +306,26 @@ def dbimport():
             flash('File Uploaded. Reading...', 'success')
         else:
             flash('Filename Error.', 'error')
-            return redirect(url_for('admin'))
+            return render_template('admin.html')
     except Exception as err:
         print(err)
         flash(err, 'error')
-        return render_template('500.html')
+        return render_template('admin.html')
 
     # OPEN CSV FILE
     try:
         file = open(filepath, 'r')
         data = file.readlines()
-        linecount = len(data)
-        flash(str(linecount-1)+' Entries Received.', 'info')
+        linecount = len(data)-1 # minus header
+        flash(str(linecount)+' Entries Received.', 'info')
         # Rebuild DB with new data
         rows = Music.resetDB(data)
         flash('Database Rebuilt. '+str(rows)+' Entries Inserted.', 'success')
-        return redirect('/')
+        return render_template('index.html'), 201
     except Exception as err:
         print(err)
-        return render_template('500.html')
-    # CSV Reader
-    # reader = csv.reader(file, delimiter=',' [, dialect='excel']
-    # for row in reader:
-    #     process(row)
+        flash(err, 'error')
+        return render_template('admin.html')
     finally:
         file.close()            # IMPT
 
@@ -366,6 +362,9 @@ def dbexport():
         print(err)
         return {},500
 
+
+
+
 # Bulk Entry by CSV File
 # Set upload folder
 UPLOAD_FOLDER = '/home/elitelib22/mysite/importedfiles/'
@@ -391,29 +390,26 @@ def bulkEntry():
             flash('File Uploaded. Reading...', 'success')
         else:
             flash('Filename Error.', 'error')
-            return redirect(url_for('admin'))
+            return render_template('admin.html')
     except Exception as err:
         print(err)
         flash(err, 'error')
-        return render_template('500.html')
+        return render_template('admin.html')
 
     # OPEN CSV FILE
     try:
         file = open(filepath, 'r')
         data = file.readlines()
-        linecount = len(data)
-        flash(str(linecount-1)+' Entries Received.', 'info')
+        linecount = len(data)-1 # minus header
+        flash(str(linecount)+' Entries Received.', 'info')
         # Rebuild DB with new data
         rows = Music.bulkEntry(data)
-        flash('Database Rebuilt. '+str(rows)+' Entries Inserted.', 'success')
-        return redirect('/')
+        flash(str(rows)+' Entries Inserted.', 'success')
+        return render_template('index.html'), 201
     except Exception as err:
         print(err)
-        return render_template('500.html')
-    # CSV Reader
-    # reader = csv.reader(file, delimiter=',' [, dialect='excel']
-    # for row in reader:
-    #     process(row)
+        flash(err, 'error')
+        return render_template('admin.html')
     finally:
         file.close()            # IMPT
 
@@ -435,7 +431,7 @@ def login():
             auth = User.loginUser(username, password)
             if auth:
                 session['username'] = username
-                flash('You are logged in', 'success')
+                flash('Welcome back, Supreme Leader.', 'success')
                 return redirect('/admin')
         except Exception as err:
             print(err)

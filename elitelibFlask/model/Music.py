@@ -244,7 +244,7 @@ class Music:
             dbConn.commit()
 
             # Loop through the Rows
-            for i in range(1,len(data)):
+            for i in range(1,len(data)): # skip header
                 rows = data[i].split(',')
                 # Data pts
                 catalogueNo = rows[0]
@@ -289,7 +289,7 @@ class Music:
             cursor = dbConn.cursor(buffered=True)
 
             # Loop through the Rows
-            for i in range(1,len(data)):
+            for i in range(1,len(data)): # skip header
                 rows = data[i].split(',')
                 # Data pts
                 catalogueNo = rows[0]
