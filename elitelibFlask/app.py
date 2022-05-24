@@ -138,6 +138,18 @@ def getMusicByCatID(catID):
 
 
 # # GET music by ensemble type
+@app.route('/ensembles')
+def getEnsembleTypes():
+    try:
+        jsonEnsembles = Music.getEnsembleTypes()
+        output = {"Ensembles": jsonEnsembles}
+        return jsonify(output), 200     # OK
+    except Exception as err:
+        print(err)
+        return {}, 500      # internal server error
+
+
+# # GET music by ensemble type
 @app.route('/ensemble/<ensemble>')
 def getMusicByEnsembleType(ensemble):
     try:

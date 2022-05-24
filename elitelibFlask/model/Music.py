@@ -5,6 +5,7 @@ def clean(x):
     x = x.strip()
     if x == '-':
         x = ''
+    x = x.replace(',', ';')
     return x
 
 
@@ -14,21 +15,33 @@ class Music:
     # INSERT new music
     @classmethod
     def insertMusic(cls, jsonMusic):
+        # clean values of commas, prevent csv problems
+        catalogueNo = clean(jsonMusic['catalogueNo'])
+        categoryID = clean(jsonMusic['categoryID'])
+        title = clean(jsonMusic['title'])
+        composer = clean(jsonMusic['composer'])
+        arranger = clean(jsonMusic['arranger'])
+        publisher = clean(jsonMusic['publisher'])
+        feat = clean(jsonMusic['featuredInstrument'])
+        ensemble = clean(jsonMusic['ensembleType'])
+        parts = clean(jsonMusic['parts'])
+        remarks = clean(jsonMusic['remarks'])
+
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
             sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cursor.execute(sql, (
-                jsonMusic['catalogueNo'],
-                jsonMusic['categoryID'],
-                jsonMusic['title'],
-                jsonMusic['composer'],
-                jsonMusic['arranger'],
-                jsonMusic['publisher'],
-                jsonMusic['featuredInstrument'],
-                jsonMusic['ensembleType'],
-                jsonMusic['parts'],
-                jsonMusic['remarks']
+                catalogueNo,
+                categoryID,
+                title,
+                composer,
+                arranger,
+                publisher,
+                feat,
+                ensemble,
+                parts,
+                remarks
                 ))
             dbConn.commit()
             rows = cursor.rowcount
@@ -63,6 +76,21 @@ class Music:
             cursor.execute(sql, (catID,))
             music = cursor.fetchall()
             return music
+        finally:
+            dbConn.close()
+            print('Connection released')
+
+
+    #GET list of ensemble types
+    @classmethod
+    def getEnsembleTypes(cls):
+        try:
+            dbConn = DatabasePool.getConnection()
+            cursor = dbConn.cursor(buffered=True)
+            sql = 'SELECT DISTINCT ensembleType FROM music'
+            cursor.execute(sql)
+            ensembleTypes = cursor.fetchall()
+            return ensembleTypes
         finally:
             dbConn.close()
             print('Connection released')
@@ -187,19 +215,29 @@ class Music:
     # EDIT music by CatNo
     @classmethod
     def editMusicByCatNo(cls, catNo, jsonMusic):
+        # clean values of commas, prevent csv problems
+        title = clean(jsonMusic['title'])
+        composer = clean(jsonMusic['composer'])
+        arranger = clean(jsonMusic['arranger'])
+        publisher = clean(jsonMusic['publisher'])
+        feat = clean(jsonMusic['featuredInstrument'])
+        ensemble = clean(jsonMusic['ensembleType'])
+        parts = clean(jsonMusic['parts'])
+        remarks = clean(jsonMusic['remarks'])
+
         try:
             dbConn = DatabasePool.getConnection()
             cursor = dbConn.cursor(buffered=True)
             sql = "UPDATE `music` SET `title` = %s, `composer` = %s, `arranger` = %s, `publisher` = %s, `featuredInstrument` = %s, `ensembleType` = %s, `parts` = %s, `remarks` = %s WHERE (`catalogueNo` = %s);"
             cursor.execute(sql, (
-                jsonMusic['title'],
-                jsonMusic['composer'],
-                jsonMusic['arranger'],
-                jsonMusic['publisher'],
-                jsonMusic['featuredInstrument'],
-                jsonMusic['ensembleType'],
-                jsonMusic['parts'],
-                jsonMusic['remarks'],
+                title,
+                composer,
+                arranger,
+                publisher,
+                feat,
+                ensemble,
+                parts,
+                remarks,
                 catNo
                 ))
             dbConn.commit()
@@ -258,13 +296,15 @@ class Music:
                 parts = rows[7]
                 remarks = rows[8].strip('\n')
                 # clean data pts
-                clean(composer)
-                clean(arranger)
-                clean(publisher)
-                clean(feat)
-                clean(ensemble)
-                clean(parts)
-                clean(remarks)
+                catalogueNo = clean(catalogueNo)
+                categoryID = clean(categoryID)
+                composer = clean(composer)
+                arranger = clean(arranger)
+                publisher = clean(publisher)
+                feat = clean(feat)
+                ensemble = clean(ensemble)
+                parts = clean(parts)
+                remarks = clean(remarks)
                 # INSERT ENTRY
                 sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (catalogueNo, categoryID, title, composer, arranger, publisher, feat, ensemble, parts, remarks)
@@ -303,13 +343,15 @@ class Music:
                 parts = rows[7]
                 remarks = rows[8].strip('\n')
                 # clean data pts
-                clean(composer)
-                clean(arranger)
-                clean(publisher)
-                clean(feat)
-                clean(ensemble)
-                clean(parts)
-                clean(remarks)
+                catalogueNo = clean(catalogueNo)
+                categoryID = clean(categoryID)
+                composer = clean(composer)
+                arranger = clean(arranger)
+                publisher = clean(publisher)
+                feat = clean(feat)
+                ensemble = clean(ensemble)
+                parts = clean(parts)
+                remarks = clean(remarks)
                 # INSERT ENTRY
                 sql = "INSERT INTO `music` (`catalogueNo`, `categoryID`, `title`, `composer`, `arranger`, `publisher`, `featuredInstrument`, `ensembleType`, `parts`, `remarks`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 values = (catalogueNo, categoryID, title, composer, arranger, publisher, feat, ensemble, parts, remarks)
